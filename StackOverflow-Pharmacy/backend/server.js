@@ -3,17 +3,16 @@ const mongoose = require('mongoose');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 3000;
+const validator = require('validator');
 
 // Middleware to parse JSON data
 app.use(express.json());
 
 
 // Database Connection
-mongoose.connect('mongodb+srv://boodee197300:Abdo6617@cluster0.5vpr96y.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
 });
 
 const db = mongoose.connection;
@@ -21,6 +20,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
+
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
@@ -31,6 +31,11 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const medicineRoutes = require('./routes/medicineRoutes');
 const chatRoomRoutes = require('./routes/chatRoomRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const pharmacistRoutes = require('./routes/pharmacistRoutes');
+const patientRoutes = require('./routes/patientRoutes');
+const administratorRoutes = require('./routes/administratorRoutes');
+
+
 
 app.use('/api/users', userRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
@@ -40,6 +45,11 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/chatrooms', chatRoomRoutes);
 app.use('/api/carts', cartRoutes);
+app.use('/api/pharmacists', pharmacistRoutes); // Add pharmacistRoutes
+app.use('/api/patients', patientRoutes); // Add patientRoutes
+app.use('/admin', administratorRoutes); // Add administratorRoutes
+
+app.all('*', (req, res)=> res.status().send('Path Not Found'))
 
 // Start the server
 app.listen(port, () => {

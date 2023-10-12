@@ -1,7 +1,8 @@
-const Admin = require('../models/adminstrator')
+const mongoose = require('mongoose'); // Import mongoose
+const Admin = require('../models/administrator')
 const Pharmacist = require('../models/pharmacist')
-const Patient = require('../models/doctor')
-const Medicine = require('../models/medicine')
+const Patient = require('../models/patient')
+const Medicine = require('../models/medicineModel')
 //const Package= require('../models/package')
 const jwt = require('jsonwebtoken')
 
@@ -41,28 +42,36 @@ const addmedicine = async (req, res) => {
     // } else {
     //   res.status(500).json({error: 'Failed to create user'})
     // }
+    res.status(200).json(medicine)
   } catch (error) {
     res.status(500).json({error: error.message})
   }
 }
-const getMedicine = async (req, res) => {
-    try {
-      const medicine = await Medicine.find({ 'numStock': { $ne: 0 } });
-  
-      if (medicine.length === 0) {
-        return res.status(404).json({ message: "No medicines with stock available." });
-      }
-  
-      res.status(200).json(medicine);
-    } catch (error) {
-      // Handle any errors that may occur during the database query
-      res.status(500).json({ error: "Internal Server Error" });
+const getAvailableMedicines = async (req, res) => {
+  try {
+    // const { name } = req.body; // Get the name from query parameters
+
+    // if (!name) {
+    //   return res.status(400).json({ message: 'Name parameter is required.' });
+    // }
+
+    const medicines = await Medicine.find();
+
+    if (medicines.length === 0) {
+      return res.status(404).json({ message: 'No matching medicines with stock available.' });
     }
+
+    res.status(200).json(medicines);
+  } catch (error) {
+    // Handle any errors that may occur during the database query
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+}
+
   const viewMedicineStats = async (req, res) => {
     try {
       // Retrieve all medicines
-      const medicines = await Workout.find({});
+      const medicines = await Medicine.find({});
   
       if (medicines.length === 0) {
         return res.status(404).json({ message: "No medicines found." });
@@ -82,17 +91,18 @@ const getMedicine = async (req, res) => {
   }
   const searchMedicineByName = async (req, res) => {
     try {
-      const { name } = req.params;
-  
+      const { name } = req.body;
+      console.log(name)
       if (!name) {
         return res.status(400).json({ error: "Please provide a medicine name for searching." });
       }
   
       // Use a case-insensitive regular expression for a partial name match
-      const query = { 'Medicine.name': { $regex: new RegExp(name, 'i') } };
+     // const query = { 'Medicine.name': name };
+      
   
       // Retrieve medicines matching the name
-      const medicines = await Medicine.find(query);
+      const medicines = await Medicine.findOne({name});
   
       if (medicines.length === 0) {
         return res.status(404).json({ message: "No medicines found with the provided name." });
@@ -105,31 +115,32 @@ const getMedicine = async (req, res) => {
     }
   }
   
-  const filterMecicineByMedicalUse = async (req, res) => {
+  const filterMedicineByMedicalUse = async (req, res) => {
     try {
-      const { medicalUse } = req.query;
-  
+      const { medicalUse } = req.body;
       if (!medicalUse) {
         return res.status(400).json({ error: "Please provide a medical use for filtering medicines." });
       }
   
-      const medicine = await Medicine.find({ 'Medicine.medicalUse': medicalUse });
+      const medicines = await Medicine.find({medicalUse});
   
-      if (medicine.length === 0) {
+      if (medicines.length === 0) {
         return res.status(404).json({ message: "No medicines found for the provided medical use." });
       }
   
-      res.status(200).json(medicine);
+      res.status(200).json(medicines);
     } catch (error) {
       // Handle any errors that may occur during the database query
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
   
+  
   const editMedicine = async (req, res) => {
     try {
-      const { name } = req.params;
+   //   const { medic } = req.body;
       const {
+        name,
         description,
         price,
         numStock,
@@ -140,27 +151,15 @@ const getMedicine = async (req, res) => {
         isOverTheCounter,
         image
       } = req.body;
-  
+      console.log(name)
       // Validate that the required fields are provided
       if (!name) {
         return res.status(400).json({ error: "Please provide the medicine's name for editing." });
       }
-  
-      // Construct the update object based on provided fields
-      const updateFields = {};
-      if (description) updateFields['Medicine.description'] = description;
-      if (price) updateFields['Medicine.price'] = price;
-      if (numStock) updateFields['Medicine.numStock'] = numStock;
-      if (numSold) updateFields['Medicine.numSold'] = numSold;
-      if (medicalUse) updateFields['Medicine.medicalUse'] = medicalUse;
-      if (activeIngredients) updateFields['Medicine.activeIngredients'] = activeIngredients;
-      if (isArchived !== undefined) updateFields['Medicine.isArchived'] = isArchived;
-      if (isOverTheCounter !== undefined) updateFields['Medicine.isOverTheCounter'] = isOverTheCounter;
-      if (image) updateFields['Medicine.image'] = image;
-  
+
       // Find and update the medicine by its name
-      const updatedMedicine = await Medicine.findOneAndUpdate({'Medicine.name': name}, { $set: updateFields }, { new: true });
-  
+      const updatedMedicine = await Medicine.findOneAndUpdate({name: name}, req.body, { new: true });
+      console.log(updateFields)
       if (!updatedMedicine) {
         return res.status(404).json({ message: "Medicine not found." });
       }
@@ -171,27 +170,27 @@ const getMedicine = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
-  // **************** i am not sure of the below method code because i dont understand its related requirment (number 16) ****************
+  // ****** i am not sure of the below method code because i dont understand its related requirment (number 16) ******
   const addQuantityToMedicine = async (req, res) => {
     try {
-      const { name, activeIngredients, price, numStock } = req.body;
+      const { name, numStock } = req.body;
   
       // Validate that the required fields are provided
-      if (!name || price === undefined || numStock === undefined || !activeIngredients || activeIngredients.length === 0) {
+      if (!name || numStock === undefined ) {
         return res.status(400).json({ error: "Please provide name, activeIngredients, price, and available quantity to add to the medicine." });
       }
   
       // Find the existing medicine by name
-      const existingMedicine = await Medicine.findOne({ 'Medicine.name': name });
-  
+      const existingMedicine = await Medicine.findOne({ name });
+      //console.log(name)
       if (!existingMedicine) {
         return res.status(404).json({ message: "Medicine not found." });
       }
   
       // Update the quantities and activeIngredients
-      existingMedicine.Medicine.numStock += numStock;
-      existingMedicine.Medicine.numSold = 0; // Reset the numSold when adding more stock
-      existingMedicine.Medicine.activeIngredients = activeIngredients;
+      existingMedicine.numStock += numStock;
+   //   existingMedicine.Medicine.numSold = 0; // Reset the numSold when adding more stock
+
   
       // Save the updated medicine
       const updatedMedicine = await existingMedicine.save();
@@ -199,25 +198,17 @@ const getMedicine = async (req, res) => {
       res.status(200).json(updatedMedicine);
     } catch (error) {
       // Handle any errors that may occur during the update
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: error.message });
     }
   }
   
-  
-  
-
-
-
-
-
-
 
 module.exports = {
 addmedicine,
-getMedicine,
+getAvailableMedicines,
 viewMedicineStats,
 searchMedicineByName,
-filterMecicineByMedicalUse,
+filterMedicineByMedicalUse,
 editMedicine,
 addQuantityToMedicine,
 }
