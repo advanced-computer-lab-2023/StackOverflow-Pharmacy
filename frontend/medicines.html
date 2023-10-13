@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine List</title>
+    <link rel="stylesheet" type="text/css" href="medicines.css">
+</head>
+<body>
+    <header>
+        <h1>Medicines List</h1>
+    </header>
+    <main>
+        <div class="medicine-list">
+            <!-- Medicine items will be dynamically added here -->
+        </div>
+    </main>
+    <script>
+        fetch('http://localhost:4000/api/patients/medicines')
+            .then(response => response.json())
+            .then(data => {
+                const medicineList = document.querySelector('.medicine-list');
+                data.forEach(medicine => {
+                    const medicineItem = document.createElement('div');
+                    medicineItem.classList.add('medicine-item');
+                    medicineItem.innerHTML = `
+                        <img class="medicine-image" src="${medicine.image}" alt="${medicine.name}">
+                        <h3>${medicine.name}</h3>
+                        <p>Price: $${medicine.price}</p>
+                        <p>Description: ${medicine.description}</p>
+                    `;
+                    medicineList.appendChild(medicineItem);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
