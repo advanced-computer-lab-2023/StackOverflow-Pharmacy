@@ -49,12 +49,7 @@ const addmedicine = async (req, res) => {
 }
 const getAvailableMedicines = async (req, res) => {
   try {
-    // const { name } = req.body; // Get the name from query parameters
-
-    // if (!name) {
-    //   return res.status(400).json({ message: 'Name parameter is required.' });
-    // }
-
+    
     const medicines = await Medicine.find();
 
     if (medicines.length === 0) {

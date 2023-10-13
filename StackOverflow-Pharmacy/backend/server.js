@@ -2,13 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config()
 const app = express();
+const cors=require('cors');
+app.use(cors())
 const port = process.env.PORT || 3000;
 const validator = require('validator');
 
 // Middleware to parse JSON data
 app.use(express.json());
 
-
+app.use(express.static('frontend/public'));
 // Database Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -49,7 +51,7 @@ app.use('/api/pharmacists', pharmacistRoutes); // Add pharmacistRoutes
 app.use('/api/patients', patientRoutes); // Add patientRoutes
 app.use('/admin', administratorRoutes); // Add administratorRoutes
 
-app.all('*', (req, res)=> res.status().send('Path Not Found'))
+app.all('*', (req, res) => res.status(404).send('Path Not Found'));
 
 // Start the server
 app.listen(port, () => {
