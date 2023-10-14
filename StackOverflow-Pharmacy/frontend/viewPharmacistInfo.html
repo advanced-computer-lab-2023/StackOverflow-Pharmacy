@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Pharmacist Info</title>
+    <link rel="stylesheet" type="text/css" href="admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <h1>Pharmacist Information</h1>
+        <div id="pharmacistInfo">
+            <!-- Pharmacist information will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch and display pharmacist information
+        const displayPharmacistInfo = () => {
+            // Replace with the correct URL for fetching pharmacist info
+            const pharmacistId = 'pharmacistId'; // Replace with the actual ID
+            fetch(`http://localhost:4000/api/admin/pharmacist/${pharmacistId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const pharmacistInfo = document.getElementById('pharmacistInfo');
+                    pharmacistInfo.innerHTML = `
+                        <p>Name: ${data.name}</p>
+                        <p>Email: ${data.email}</p>
+                        <p>Other pharmacist details go here...</p>
+                    `;
+                })
+                .catch(error => console.error('Error fetching pharmacist info:', error));
+        };
+
+        // Call the displayPharmacistInfo function when the page loads
+        displayPharmacistInfo();
+    </script>
+</body>
+</html>

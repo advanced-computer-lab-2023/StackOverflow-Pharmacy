@@ -28,50 +28,50 @@ const getAvailableMedicines = async (req, res) => {
   }
 }
 const searchMedicineByName = async (req, res) => {
-    try {
-      const { name } = req.body;
-  
-      if (!name) {
-        return res.status(400).json({ error: "Please provide a medicine name for searching." });
-      }
-  
+  try {
+    const name = req.query.name;
+    console.log(name)
+    if (!name) {
+      return res.status(400).json({ error: "Please provide a medicine name for searching." });
+    }
 
-  
-      // Retrieve medicines matching the name
-      const medicines = await Medicine.find({name});
-  
-      if (medicines.length === 0) {
-        return res.status(404).json({ message: "No medicines found with the provided name." });
+    // Perform a case-insensitive search using a regular expression
+    const medicines = await Medicine.find({ name: { $regex: new RegExp(name, 'i') } });
+
+    if (medicines.length === 0) {
+      return res.status(404).json({ message: "No medicines found with the provided name." });
+    }
+
+    res.status(200).json(medicines);
+  } catch (error) {
+    // Handle any errors that may occur during the database query
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const filterMedicineByMedicalUse = async (req, res) => {
+  try {
+      const { medicalUse } = req.query;
+
+      if (!medicalUse) {
+          return res.status(400).json({ error: "Please provide a medical use for filtering medicines." });
       }
-  
+
+      // Create a case-insensitive regular expression pattern for the medicalUse
+      const regex = new RegExp(medicalUse, "i");
+
+      // Use the regular expression to filter medicines
+      const medicines = await Medicine.find({ medicalUse: regex });
+
+      if (medicines.length === 0) {
+          return res.status(404).json({ message: "No medicines found for the provided medical use." });
+      }
+
       res.status(200).json(medicines);
-    } catch (error) {
+  } catch (error) {
       // Handle any errors that may occur during the database query
       res.status(500).json({ error: "Internal Server Error" });
-    }
   }
-  const filterMedicineByMedicalUse = async (req, res) => {
-    try {
-      console.log("a")
-      const { medicalUse } = req.body;
-      console.log("a")
-      if (!medicalUse) {
-        return res.status(400).json({ error: "Please provide a medical use for filtering medicines." });
-      }
-      console.log("b")
-      const medicines = await Medicine.find({ medicalUse });
-      console.log("c")
-      if (medicines.length === 0) {
-        return res.status(404).json({ message: "No medicines found for the provided medical use." });
-      }
-      console.log("d")
-      res.status(200).json(medicines);
-      console.log("e")
-    } catch (error) {
-      // Handle any errors that may occur during the database query
-      res.status(500).json({ error:error.message });
-    }
-  }
+};
 
   
 

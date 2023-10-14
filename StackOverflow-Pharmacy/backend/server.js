@@ -1,16 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config()
+require('dotenv').config();
 const app = express();
-const cors=require('cors');
-app.use(cors())
+const cors = require('cors');
+const path = require('path'); // Import the path module
 const port = process.env.PORT || 3000;
-const validator = require('validator');
 
 // Middleware to parse JSON data
 app.use(express.json());
+app.use(cors());
 
-app.use(express.static('frontend/public'));
 // Database Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -23,11 +22,9 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-
 // Routes
 const userRoutes = require('./routes/userRoutes');
 const prescriptionRoutes = require('./routes/prescriptionRoutes');
-const requestRoutes = require('./routes/requestRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const medicineRoutes = require('./routes/medicineRoutes');
@@ -37,21 +34,32 @@ const pharmacistRoutes = require('./routes/pharmacistRoutes');
 const patientRoutes = require('./routes/patientRoutes');
 const administratorRoutes = require('./routes/administratorRoutes');
 
-
-
 app.use('/api/users', userRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
-app.use('/api/requests', requestRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/chatrooms', chatRoomRoutes);
 app.use('/api/carts', cartRoutes);
-app.use('/api/pharmacists', pharmacistRoutes); // Add pharmacistRoutes
-app.use('/api/patients', patientRoutes); // Add patientRoutes
-app.use('/admin', administratorRoutes); // Add administratorRoutes
+app.use('/api/pharmacists', pharmacistRoutes);
+app.use('/api/patients', patientRoutes);
+app.use('/admin', administratorRoutes);
 
-app.all('*', (req, res) => res.status(404).send('Path Not Found'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'homepage.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'admin.html'));
+});
+
+app.get('/addadmin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'addadmin.html'));
+});
+
+// Add similar code for other HTML files and routes
+
+
 
 // Start the server
 app.listen(port, () => {

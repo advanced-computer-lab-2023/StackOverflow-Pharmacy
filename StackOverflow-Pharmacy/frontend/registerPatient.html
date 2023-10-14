@@ -1,154 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title> Patient Registration</title>
+    <title>Patient Registration</title>
     <link rel="stylesheet" type="text/css" href="registerPatient.css">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-<!--===============================================================================================-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<div class = "formcontainer">
+    <div class="formcontainer">
+        <form class="login100-form validate-form">
+            <span class="login100-form-title">
+                Patient Registration
+            </span>
 
-				<form class="login100-form validate-form" onsubmit="return false;">
-					<span class="login100-form-title">
-						Patient Registration
-					</span>
+            <div class="wrap-input100 validate-input" data-validate="Name is required">
+                <input class="input100" id="name" type="text" name="name" placeholder="Name" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                </span>
+            </div>
 
-                    <div class="wrap-input100 validate-input" data-validate = "UserName is required">
-						<input class="input100" id="username" type="text" name="username" placeholder="Username" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Username is required">
+                <input class="input100" id="username" type="text" name="username" placeholder="Username" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                </span>
+            </div>
 
-                    <div class="wrap-input100 validate-input" data-validate = "Name is required">
-						<input class="input100" id="name" type="password" name="name" placeholder="Name" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                <input class="input100" id="email" type="text" name="email" placeholder="Email" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                </span>
+            </div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" id="email" type="text" name="email" placeholder="Email" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-envelope" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Password is required">
+                <input class="input100" id="password" type="password" name="password" placeholder="Password" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class "fa fa-lock" aria-hidden="true"></i>
+                </span>
+            </div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" id="password" type="password" name="pass" placeholder="Password" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Date of Birth is required">
+                <input class="input100" id="birth" type="text" name="birth" placeholder="Date of Birth" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                </span>
+            </div>
 
-                    <div class="wrap-input100 validate-input" data-validate = "Date Of Birth is required">
-						<input class="input100" id="birth" type="text" name="birth" placeholder="Birth" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
-                    
-                    <div class="wrap-input100 validate-input" data-validate = "Gneder Type is required">
-						<input class="input100" id="gender" type="text" name="gender" placeholder="Gender" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Gender is required">
+                <input class="input100" id="gender" type="text" name="gender" placeholder="Gender" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-venus-mars" aria-hidden="true"></i>
+                </span>
+            </div>
 
-                    <div class="wrap-input100 validate-input" data-validate = "Number is required">
-						<input class="input100" id="number" type="text" name="number" placeholder="Number" required>
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div class="wrap-input100 validate-input" data-validate="Phone number is required">
+                <input class="input100" id="phone" type="text" name="phone" placeholder="Phone" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-phone" aria-hidden="true"></i>
+                </span>
+            </div>
 
-                    <div class="wrap-input100 validate-input" data-validate = "Emergency Number is required">
-						<input class="input100" id="emergency" type="text" name="emergency" placeholder="Emergency Number" required> 
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+			<!-- Add "[]" to the name attribute to indicate it's an array of emergency contacts -->
+<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+    <input class="input100" id="emergencyContact" type="text" name="emergencyContact[]" placeholder="Emergency Contact Name" required>
+    <!-- Other fields for emergency contact data -->
+</div>
+<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+    <input class="input100" id="emergencyName" type="text" name="emergencyName[]" placeholder="Emergency Contact Number" required>
+    <!-- Other fields for emergency contact data -->
+</div>
+<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+    <input class="input100" id="emergencyRelation" type="text" name="emergencyRelation[]" placeholder="Emergency Contact Relation" required>
+    <!-- Other fields for emergency contact data -->
+</div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Emergency Full Name is required">
-						<input class="input100" id="emergency" type="text" name="emergency" placeholder="Emergency Full name" required> 
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Emergency Relation is required">
-						<input class="input100" id="emergency" type="text" name="emergency" placeholder="Emergency Relation" required> 
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-lock" aria-hidden="true"></i>
-						</span>
-					</div>
-					
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
-							Register
-						</button>
-					</div>
-				</form>
-				</div>
-				<script>
-					const loginButton = document.getElementById('login100-form-btn');
-				  
-					loginButton.addEventListener('click', async () => {
-					  // Step 3: Get the values of the email and password input fields
-					  const email = document.getElementById('email').value;
-					  const password = document.getElementById('password').value;
-					
-					// Step 6: Redirect the user to the home page for their type
-					const userEmail = email.toLowerCase();
-					let userType;
-					if (userEmail === 'client@example.com') {
-					  if(password == 'client')
-						  window.location.href = 'index.html';
-						else 
-						alert("invalid password");
-					} else if (userEmail === 'banker@example.com') {
-						if(password =='banker')
-						window.location.href = 'index.html';
-						else 
-						alert("invalid password");
-					  
-					} else if (userEmail === 'admin@example.com') {
-						if(password =='admin')
-						window.location.href = 'index.html';
-						else 
-						alert("invalid password");
-					
-					} 
-					}
-					);
-				
-				  </script>
-			</div>
-		</div>
-	</div>
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn" id="registerButton">
+                    Register
+                </button>
+            </div>
+            
+        </form>
+    </div>
+
+    <script>
+		// Add an event listener to the form submission
+		document.addEventListener('DOMContentLoaded', () => {
+			const registerButton = document.getElementById('registerButton');
+			const errorMessageElement = document.getElementById('errorMessage');
 	
+			registerButton.addEventListener('click', async (event) => {
+				event.preventDefault(); // Prevent the default form submission
+	
+				// Get values from the registration form
+				const name = document.getElementById('name').value;
+				const username = document.getElementById('username').value;
+				const email = document.getElementById('email').value;
+				const password = document.getElementById('password').value;
+				const birth = document.getElementById('birth').value;
+				const gender = document.getElementById('gender').value;
+				const phone = document.getElementById('phone').value;
+				const emergencyContact = document.getElementById('emergencyContact').value;
+				const emergencyName = document.getElementById('emergencyName').value;
+				const emergencyRelation = document.getElementById('emergencyRelation').value;
+
+				const emer = {emergencyContact,emergencyName,emergencyRelation}
+	
+				// Create an object with the form data
+				const formData = {
+					name,
+					username,
+					email,
+					password,
+					birth,
+					gender,
+					phone,
+					emer,
+					role: 'Patient', // Assuming the role is 'Patient'
+				};
+	
+				// Send a POST request to your backend API
+				try {
+					const response = await fetch('http://localhost:4000/api/users/register', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(formData),
+					});
+	
+					if (response.status === 201) {
+						// Registration successful, you can redirect to another page or show a success message
+						alert('Patient registration successful! You can now log in.');
+						window.location.href = 'homepage.html'; // Redirect to your login page
+					} else {
+						// Registration failed, handle the error
+						const errorData = await response.json(); // Parse the error response
+						const errorMessage = errorData.message || 'An error occurred. Please try again later.';
+						errorMessageElement.textContent = errorMessage;
+						errorMessageElement.style.display = 'block';
+					}
+				} catch (error) {
+					console.error('Error:', error);
+					errorMessageElement.textContent = 'An error occurred. Please try again later.';
+					errorMessageElement.style.display = 'block';
+				}
+			});
+		});
+	</script>
+</body>
+</html>

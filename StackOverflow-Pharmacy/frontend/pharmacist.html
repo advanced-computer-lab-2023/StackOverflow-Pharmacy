@@ -11,17 +11,89 @@
         <button class="dashboard-button" id="searchButton">Search for Medicine</button>
         <div class="search-bar">
             <input type="text" id="medicineSearch" placeholder="Search by name">
-            <button id="searchButton">Search</button>
         </div>
         <button class="dashboard-button" id="filterButton">Filter Medicines</button>
         <div class="search-bar">
-            <input type="text" id="medicineSearch" placeholder="medical use">
-            <button id="searchButton"> filter </button>
+            <input type="text" id="medicineFilter" placeholder="Filter by medical use">
         </div>
-        <button class="dashboard-button" id="medicineListButton">Available Medicines</button>
+        <button class="dashboard-button" id="medicineListButton">View Available Medicines</button>
+        <button class="dashboard-button" id="medicineQuantityListButton">View Medicine's Quantity & Sales</button>
         <button class="dashboard-button" id="addMedicineButton">Add Medicine</button>
         <button class="dashboard-button" id="editMedicineButton">Edit Medicine</button>
     </main>
     <script src="pharmacist.js"></script>
+    <script>
+        const searchMedicineButton = document.getElementById("searchButton");
+        const medicineSearchInput = document.getElementById("medicineSearch");
+        const filterMedicineButton = document.getElementById("filterButton");
+        const medicineFilterInput = document.getElementById("medicineFilter");
+
+        searchMedicineButton.addEventListener("click", function () {
+            const searchName = medicineSearchInput.value.trim();
+
+            if (searchName === "") {
+                alert("Please enter a search term.");
+            } else {
+                // Use the entered name to fetch medicines from the backend
+                fetch(`http://localhost:4000/api/pharmacists/medicines/search?name=${encodeURIComponent(searchName)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to searched.html with the search results as a query parameter
+                        window.location.href = `searched.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
+
+        filterMedicineButton.addEventListener("click", function () {
+            const filterTerm = medicineFilterInput.value.trim();
+
+            if (filterTerm === "") {
+                alert("Please enter a filter term.");
+            } else {
+                // Use the entered filter term to fetch filtered medicines from the backend
+                fetch(`http://localhost:4000/api/pharmacists/medicines/medical-use?medicalUse=${encodeURIComponent(filterTerm)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to filtered.html with the filtered results as a query parameter
+                        window.location.href = `filtered.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
+        const medicineListButton = document.getElementById('medicineListButton');
+        
+        medicineListButton.addEventListener('click', function() {
+                // Redirect to the Medicines List page
+                window.location.href = 'medicines.html'; // Update with the correct URL
+            });
+            const medicineQuantityListButton = document.getElementById('medicineQuantityListButton');
+        
+            medicineQuantityListButton.addEventListener('click', function() {
+                // Redirect to the Medicines List page
+                window.location.href = 'medicinesStates.html'; // Update with the correct URL
+            });
+            const editMedicineButton = document.getElementById('editMedicineButton');
+         const addMedicineButton = document.getElementById('addMedicineButton');
+         editMedicineButton.addEventListener('click', function() {
+            // Redirect to the Medicines List page
+            window.location.href = 'editMedicine.html'; // Update with the correct URL
+        });
+        addMedicineButton.addEventListener('click', function() {
+            // Redirect to the Medicines List page
+            console.log("aaffffff")
+            window.location.href = 'addMedicine.html'; // Update with the correct URL
+        });
+    </script>
 </body>
 </html>

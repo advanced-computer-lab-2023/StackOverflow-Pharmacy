@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>editmedicine Dashboard</title>
+    <link rel="stylesheet" href="editMedicine.css">
+</head>
+<body>
+    <main>
+            <input type="text" id="medicineName" placeholder=" name of medicine want to edit">
+            <input type="text" id="medicinedescription" placeholder="description">
+            <input type="text" id="medicinePrice" placeholder="price">
+            <input type="text" id="medicineNumStock" placeholder="numStock">
+            <input type="text" id="medicineNumSold" placeholder="numSold">
+            <input type="text" id="medicineMedicalUse" placeholder="medicalUse">
+            <input type="text" id="medicineActiveIngredients" placeholder="activeIngredients">
+            <input type="text" id="medicineIsArchived" placeholder="isArchived">
+            <input type="text" id="medicineIsOverTheCounter" placeholder="isOverTheCounter">
+            <input type="text" id="medicineImage" placeholder="image">
+            <button class="dashboard-button" id="editMedicineButton">Edit Medicine</button>
+       
+    </main>
+    <script>
+         const editMedicineButton = document.getElementById('editMedicineButton');
+        
+        editMedicineButton.addEventListener('click', function() {
+                const name = document.getElementById('medicineName').value;
+                const description = document.getElementById('medicinedescription').value;
+                const price = document.getElementById('medicinePrice').value;
+                const numStock = document.getElementById('medicineNumStock').value;
+                const numSold = document.getElementById('medicineNumSold').value;
+                const medicalUse = document.getElementById('medicineMedicalUse').value;
+                const activeIngredients = document.getElementById('medicineActiveIngredients').value;
+                const isArchived = document.getElementById('medicineIsArchived').value;
+                const isOverTheCounter = document.getElementById('medicineIsOverTheCounter').value;
+                const image = document.getElementById('medicineImage').value;
+
+
+                const medicine = {
+                    name, // Use the captured values
+                    description,
+                    price,
+                    numStock,
+                 numSold ,
+                 medicalUse, 
+                 activeIngredients: [activeIngredients],
+                 isArchived ,
+                 isOverTheCounter, 
+                 image,
+                
+                };
+            fetch('http://localhost:4000/api/pharmacists/medicines/edit',{
+                method:'PUT',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({medicine})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("")
+       }).catch(error => {
+        console.error('Error fetching data:', error);
+    });
+});
+
+    </script>
+</body>
+</html>

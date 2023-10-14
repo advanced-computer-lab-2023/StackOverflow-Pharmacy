@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="searched.css"> <!-- Link to the pharmacist.css stylesheet -->
+</head>
+<body>
+    <main>
+        <h1>Search Results</h1>
+        <div id="searchResults">
+            <!-- Medicine results will be displayed here using JavaScript -->
+        </div>
+    </main>
+    <script>
+        // Get the search results from the query parameter
+        const searchResults = JSON.parse(new URLSearchParams(window.location.search).get("results"));
+
+        // Reference the div where the search results will be displayed
+        const searchResultsDiv = document.getElementById("searchResults");
+
+        // Check if there are search results
+        if (searchResults && searchResults.length > 0) {
+            searchResults.forEach((medicine) => {
+                // Create a div to display each medicine
+                const medicineDiv = document.createElement("div");
+
+                // Add the medicine details to the div
+                medicineDiv.innerHTML = `
+                    <h2>${medicine.name}</h2>
+                    <p>Description: ${medicine.description}</p>
+                    <p>Price: $${medicine.price}</p>
+                `;
+
+                // Append the medicine div to the search results container
+                searchResultsDiv.appendChild(medicineDiv);
+            });
+        } else {
+            // Display a message if no results were found
+            searchResultsDiv.innerHTML = "<p>No medicines found with the provided name.</p>";
+        }
+    </script>
+</body>
+</html>

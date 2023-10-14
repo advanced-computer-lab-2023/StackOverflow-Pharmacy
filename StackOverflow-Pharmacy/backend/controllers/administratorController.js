@@ -56,6 +56,42 @@ const removePatient = async (req, res) => {
   
     res.status(200).json(patient)
 }
+const acceptRequest = async (req, res) => {
+  try {
+      // Retrieve the request ID that needs to be accepted
+      const requestId = req.params.requestId;
+
+      // Find the request by ID
+      const request = await Request.findById(requestId);
+
+      if (!request) {
+          return res.status(404).json({ message: 'Request not found' });
+      }
+
+      // If the request is 'Pending,' you can proceed to create the pharmacist user
+      if (request.status === 'Pending') {
+          const pharmacistData = { ...request._doc };
+          delete pharmacistData._id;
+          delete pharmacistData.status;
+
+          // Create the pharmacist user using the data from the request
+          const pharmacist = new User({ ...pharmacistData, role: 'Pharmacist' });
+          await pharmacist.save();
+
+          // Update the status of the request to 'Accepted'
+          request.status = 'Accepted';
+          await request.save();
+
+          return res.status(200).json({ message: 'Pharmacist request accepted' });
+      } else {
+          return res.status(400).json({ message: 'Request has already been processed' });
+      }
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error });
+  }
+};
+
   
 const getAvailableMedicines = async (req, res) => {
     try {
@@ -126,25 +162,27 @@ const getAvailableMedicines = async (req, res) => {
   
   
   
-const getPharmacistInfo = async (req, res) => {
-  try {
-    const { id } = req.params; // Get the patient's ID from the request parameters
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid patient ID' });
+  const getPharmacistInfo = async (req, res) => {
+    try {
+      const { id } = req.params; // Get the pharmacist's ID from the request parameters
+  
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid pharmacist ID' });
+      }
+  
+      const pharmacist = await Pharmacist.findById(id);
+  
+      if (!pharmacist) {
+        return res.status(404).json({ error: 'Pharmacist not found' });
+      }
+  
+      res.status(200).json(pharmacist);
+    } catch (error) {
+      // Handle any errors that may occur during the database query
+      res.status(500).json({ error: error.message });
     }
-
-    const user = await User.findById(id).select();
-
-    console.log(User.findById(id))
-
-
-    res.status(200).json(user);
-  } catch (error) {
-    // Handle any errors that may occur during the database query
-    res.status(500).json({ error: error.message });
   }
-}
+  
 const getPatientBasicInfo = async (req, res) => {
   try {
     const { id } = req.params; // Get the patient's ID from the request parameters
@@ -221,5 +259,6 @@ getPharmacistInfo,
 searchMedicineByName,
 filterMedicineByMedicalUse,
 getAvailableMedicines,
-createWebToken
+createWebToken,
+acceptRequest
 }

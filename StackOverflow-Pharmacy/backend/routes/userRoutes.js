@@ -3,7 +3,10 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 
 // Register a new user (patient or pharmacist)
-router.post('/register', userController.registerUser);
+router.post('/register', userController.registerPatient);
+
+//submit a new request 
+router.post('/submit',userController.createPendingPharmacist);
 
 // Login user
 router.post('/login', userController.loginUser);

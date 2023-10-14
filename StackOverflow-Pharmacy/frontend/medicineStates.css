@@ -1,0 +1,50 @@
+/* Add this CSS to medicineStats.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.main {
+    margin: 20px;
+}
+
+.medicine-stat-item {
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.medicine-stat-item h3 {
+    font-size: 20px;
+    margin: 0;
+    color: #007BFF;
+}
+
+.medicine-stat-item p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.medicine-stat-item p:last-child {
+    color: #FF5733;
+}
+
+/* Add more styles as needed */
+

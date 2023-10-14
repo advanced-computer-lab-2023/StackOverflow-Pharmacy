@@ -1,46 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title> Home Page</title>
+    <title>Home Page</title>
     <link rel="stylesheet" type="text/css" href="patient.css">
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-<!--===============================================================================================-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text css" href="vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <style>
+        /* Place your custom styles here */
+    </style>
 </head>
 <body>
-	
 <div class="formcontainer">
     <form class="login100-form validate-form" onsubmit="return false;">
         <span class="login100-form-title">
-             Patient
+            Patient
         </span>
-      
+
         <div class="container-login100-form-btn">
-            
-          
-            
             <div class="container-login100-form-btn">
                 <button class="login100-form-btn" id="viewMedicinesButton">
                     View Available Medicines
                 </button>
             </div>
-            
-
-
-           
 
             <div class="container-login100-form-btn">
                 <button class="login100-form-btn" id="search">
@@ -48,22 +36,86 @@
                 </button>
             </div>
 
-            <div class="wrap-input100 validate-input" data-validate = "Search is required">
+            <div class="wrap-input100 validate-input" data-validate="Search is required">
                 <input class="input100" id="searchText" type="text" name="search" placeholder="Search" required>
                 <span class="focus-input100"></span>
                 <span class="symbol-input100">
                     <i class="fa fa-lock" aria-hidden="true"></i>
                 </span>
             </div>
-
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn" id="filterMedicineButton">
+                    Filter Medicine
+                </button>
+            </div>
+            <!-- Add Filter Textbox -->
+            <div class="wrap-input100 validate-input" data-validate="Filter is required">
+                <input class="input100" id="filterText" type="text" name="filter" placeholder="Filter" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                </span>
+            </div>
         </div>
+
         <script>
+
             const viewMedicinesButton = document.getElementById('viewMedicinesButton');
-        
+
             viewMedicinesButton.addEventListener('click', function() {
                 // Redirect to the Medicines List page
                 window.location.href = 'medicines.html'; // Update with the correct URL
             });
+
+            const searchMedicineButton = document.getElementById("search");
+            const medicineSearchInput = document.getElementById("searchText");
+            const filterMedicineButton = document.getElementById("filterMedicineButton");
+            const medicineFilterInput = document.getElementById("filterText");
+            searchMedicineButton.addEventListener("click", function () {
+            const searchName = medicineSearchInput.value.trim();
+
+            if (searchName === "") {
+                alert("Please enter a search term.");
+            } else {
+                // Use the entered name to fetch medicines from the backend
+                fetch(`http://localhost:4000/api/patients/medicines/search?name=${encodeURIComponent(searchName)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to searched.html with the search results as a query parameter
+                        window.location.href = `searched.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
+
+        filterMedicineButton.addEventListener("click", function () {
+            const filterTerm = medicineFilterInput.value.trim();
+
+            if (filterTerm === "") {
+                alert("Please enter a filter term.");
+            } else {
+                // Use the entered filter term to fetch filtered medicines from the backend
+                fetch(`http://localhost:4000/api/patients/medicines/filter?medicalUse=${encodeURIComponent(filterTerm)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to filtered.html with the filtered results as a query parameter
+                        window.location.href = `filtered.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
         </script>
-        
     </form>
+</div>
+</body>
+</html>

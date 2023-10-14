@@ -15,19 +15,71 @@ function generateToken(user) {
 }
 
 // Register a new user (patient or pharmacist)
-const registerUser = async (req, res) => {
+const registerPatient = async (req, res) => {
   try {
     const {
-      name,
       username,
+      name,
       email,
       password,
       birthDate,
-      gender,
-      phone,
-      addresses,
       role,
-      profileImage,
+    } = req.body;
+
+    // Check if the email is already registered
+  /*  const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }*/
+
+    // Hash the password before saving it
+   // const hashedPassword = bcrypt.hashSync(password, 10);
+
+    // Create a new user document
+    const newUser = new User({
+      username,
+      password,
+      role
+    });
+
+     // If the user is a patient, pharmacist, or administrator, add relevant properties
+     console.log(role)
+     if (role === 'Patient') {
+        const { gender,phone,emergencyContact} = req.body;
+        console.log(newUser)
+      const pat = {
+        _id:newUser._id,
+        name:name,
+        gender : gender,
+        email:email,
+        phone : phone,
+        birthdate:birthDate,
+        emergencyContact : emergencyContact
+  }
+        patientt.create(pat)
+      } else if (role === 'Administrator') {
+        // Add any specific properties for administrators here
+      }
+      
+    await newUser.save();
+
+    res.status(201).json({ user: newUser });
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).json({ error: error });
+  }
+}
+
+const createPendingPharmacist = async (req, res) => {
+  try {
+    const {
+      username,
+      name,
+      email,
+      password,
+      birthDate,
+      role,
     } = req.body;
 
     // Check if the email is already registered
@@ -42,68 +94,75 @@ const registerUser = async (req, res) => {
 
     // Create a new user document
     const newUser = new User({
-      name,
       username,
-      email,
       password: hashedPassword,
-      birthDate,
-      gender,
-      phone,
-      addresses,
-      role,
-      profileImage,
+      role
     });
 
      // If the user is a patient, pharmacist, or administrator, add relevant properties
      console.log(role)
-     if (role === 'patient') {
-        const { emergencyContact, family, medicalHistory, package } = req.body;
-        console.log(newUser)
-      const pat = {
-        _id:newUser._id,
-    emergencyContact,
-    medicalHistory:medicalHistory,
-    family :family,
-    
-  }
-        patientt.create(pat)
-
-      } else if (role === 'Pharmacist') {
-        const { hourRate, affiliation, educationBackground, speciality } = req.body;
-        const pharm ={
-          _id:newUser._id,
-         hourRate : hourRate,
-        affiliation : affiliation,
-        educationBackground : educationBackground,
-        speciality : speciality
-        }
-
-        pharmacist.create(pharm)
+     if (role === 'Pharmacist') {
+      const { hourRate, affiliation, educationBackground, email } = req.body;
+      console.log(newUser)
+      const pharm = {
+        _id: newUser._id,
+        hourRate: hourRate,
+        affiliation: affiliation,
+        educationBackground: educationBackground, // Fixed property name
+        name: name,
+        email: email,
+        birthdate: birthDate
+      }
+      pharmacist.create(pharm)
+      
       } else if (role === 'Administrator') {
         // Add any specific properties for administrators here
       }
-      // } else if (role === 'Pharmacist') {
-      //   const { hourRate, affiliation, educationBackground, speciality } = req.body;
-      //   newUser.hourRate = hourRate;
-      //   newUser.affiliation = affiliation;
-      //   newUser.educationBackground = educationBackground;
-      //   newUser.speciality = speciality;
-      //   pharmacist.create(newUser)
-      // } else if (role === 'Administrator') {
-      //   // Add any specific properties for administrators here
-      // }
+      
     await newUser.save();
-   
-
-    // Generate a JWT token for authentication
-   // const token = generateToken(newUser);
 
     res.status(201).json({ user: newUser });
   } catch (error) {
-    console.log(error)
+    console.log('Error:', error);
     res.status(500).json({ error: error });
   }
 }
+
+/*const submitRequest = async (req, res) => {
+  try {
+      const {
+          username,
+          name,
+          email,
+          password,
+          birthDate,
+          hourRate,
+          affiliation,
+          educationBackground,
+      } = req.body;
+
+      // Create a new request document with all pharmacist data
+      const request = new Request({
+          username,
+          name,
+          email,
+          password,
+          birthDate,
+          hourRate,
+          affiliation,
+          educationBackground,
+      });
+
+      // Save the request as 'Pending'
+      await request.save();
+
+      res.status(201).json({ message: 'Pharmacist request submitted successfully', request });
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error });
+  }
+};*/
+
 
 // Login user
 const loginUser = async (req, res) => {
@@ -154,7 +213,8 @@ const getUserProfile = async (req, res) => {
 // Add more functions for role-specific actions as needed
 
 module.exports = {
-  registerUser,
+  registerPatient,
+  createPendingPharmacist,
   loginUser,
   getUserProfile,
   // Add more controller functions here

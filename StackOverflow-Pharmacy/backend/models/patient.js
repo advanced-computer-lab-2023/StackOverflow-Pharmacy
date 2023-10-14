@@ -1,36 +1,52 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const { isEmail } = require('validator');
 
-const Schema = mongoose.Schema
-
-const patient = new Schema({
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required: true
+const patientSchema = new Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 50,
+  },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['male', 'female', 'other'], // Define the allowed gender values
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true, // Ensure unique email addresses for pharmacists
+    trim: true,
+    validate: {
+      validator: isEmail,
+      message: 'Invalid email address',
     },
-    emergencyContact:{ 
-        name: {type:String, required: true},
-        phone: {type:Number, required: true}, 
-        relation: {type:String, required: true}
-    }, 
-    medicalHistory: [{
-        name: {type:String, required:true},
-        medicalRecord: {type:String, required:true} 
-    }],
-    family : [{
-        name: {type:String, required: true},
-        nationalID: {type:Number, required: true},
-        phone: {type:Number, required: true},
-        relation: {type:String,enum:['wife','husband','child'], required: true} 
-    }],
-    package: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'Package',
-    },
-    purchaseDate: {type: Date}
+  },
+  phone: {
+    type: String,
+    required: true, // If you require a phone for patients
+  },
+  birthdate: {
+    type: Date,
+  },
+  emergencyContact: {
+    name: { type: String, required: true },
+    phone: { type: Number, required: true },
+    relation: { type: String, required: true },
+  },
+  
+  
+  
+}, { timestamps: true });
 
-}, { timestamps: true })
+const Patient = mongoose.model('Patient', patientSchema);
 
-const patientt=mongoose.model('patient', patient)
-
-module.exports = patientt
+module.exports = Patient;

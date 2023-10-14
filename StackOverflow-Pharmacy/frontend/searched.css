@@ -1,0 +1,52 @@
+/* searched.css */
+
+/* Apply body styles from pharmacist.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #634783;
+}
+
+/* Apply main styles from pharmacist.css */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+/* Apply search-bar styles from pharmacist.css */
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin: 20px;
+}
+
+/* Apply input[type="text"] styles from pharmacist.css */
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Apply search-button styles from pharmacist.css */
+.search-button {
+    background-color: #31083a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s;
+}
+
+/* Apply search-button hover styles from pharmacist.css */
+.search-button:hover {
+    background-color: #b30092;
+}
+
+/* Add additional styles for the searched.html page below */

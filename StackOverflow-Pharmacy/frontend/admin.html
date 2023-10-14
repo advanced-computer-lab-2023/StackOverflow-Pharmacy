@@ -36,35 +36,49 @@
 					</div>
 
                     <div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
+						<button class="login100-form-btn" id="removePharmacistButton">
 							Remove Pharmacist
 						</button>
 					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" id="pharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" required>
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
+					</div>
 
                     <div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
+						<button class="login100-form-btn" id="removePatientButton">
 							Remove Patient
 						</button>
 					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" id="patientId" type="text" name="patientId" placeholder="Patient ID" required>
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
+					</div>
+					
 
                     <div class="container-login100-form-btn">
 						<button class="login100-form-btn" id="login100-form-btn">
-							View A Pharmacist Info
+							View  Pharmacists Requests
 						</button>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
-							View Medicine
+						<button class="login100-form-btn" id="viewMedicinesButton">
+							View Medicines
 						</button>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
-							View Medicine's Quality & Sales
+						<button class="login100-form-btn" id="search">
+							Search for medicines
 						</button>
 					</div>
-
 					<div class="wrap-input100 validate-input" data-validate = "Search is required">
 						<input class="input100" id="searchText" type="text" name="search" placeholder="Search" required>
 						<span class="focus-input100"></span>
@@ -74,34 +88,159 @@
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="search">
-							Search
-						</button>
-					</div>
-
-					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" id="filter">
-							Filter
+							Filter medicines
 						</button>
+					</div>
+					<div class="wrap-input100 validate-input" data-validate = "filter is required">
+						<input class="input100" id="filterText" type="text" name="search" placeholder="filter" required>
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-lock" aria-hidden="true"></i>
+						</span>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="viewPharm">
-							View Pharmacist's Info
+						<button class="login100-form-btn" id="viewPharmacistInfoButton">
+							View a Pharmacist's Info
 						</button>
+					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" id="pharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" required>
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
 					</div>
 
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" id="viewPatient">
-							View Patient's Info
+							View a Patient's Info
 						</button>
 					</div>
 
+					<div class="wrap-input100 validate-input">
+						<input class="input100" id="patientId" type="text" name="patientId" placeholder="Patient ID" required>
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-user" aria-hidden="true"></i>
+						</span>
+					</div>
 
 				</div>
 			</form>
 
              <script>
+				const viewMedicinesButton = document.getElementById('viewMedicinesButton');
+
+viewMedicinesButton.addEventListener('click', function() {
+	// Redirect to the Medicines List page
+	window.location.href = 'medicines.html'; // Update with the correct URL
+});
+            const searchMedicineButton = document.getElementById("search");
+            const medicineSearchInput = document.getElementById("searchText");
+            const filterMedicineButton = document.getElementById("filter");
+            const medicineFilterInput = document.getElementById("filterText");
+            searchMedicineButton.addEventListener("click", function () {
+            const searchName = medicineSearchInput.value.trim();
+
+            if (searchName === "") {
+                alert("Please enter a search term.");
+            } else {
+                // Use the entered name to fetch medicines from the backend
+                fetch(`http://localhost:4000/api/patients/medicines/search?name=${encodeURIComponent(searchName)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to searched.html with the search results as a query parameter
+                        window.location.href = `searched.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
+
+        filterMedicineButton.addEventListener("click", function () {
+            const filterTerm = medicineFilterInput.value.trim();
+
+            if (filterTerm === "") {
+                alert("Please enter a filter term.");
+            } else {
+                // Use the entered filter term to fetch filtered medicines from the backend
+                fetch(`http://localhost:4000/api/patients/medicines/filter?medicalUse=${encodeURIComponent(filterTerm)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Redirect to filtered.html with the filtered results as a query parameter
+                        window.location.href = `filtered.html?results=${encodeURIComponent(JSON.stringify(data))}`;
+                    })
+                    .catch((error) => console.error('Error fetching data:', error));
+            }
+        });
+		const removePharmacistButton = document.getElementById("removePharmacistButton");
+const pharmacistIdInput = document.getElementById("pharmacistId");
+
+removePharmacistButton.addEventListener("click", function () {
+    const pharmacistId = pharmacistIdInput.value.trim();
+
+    if (pharmacistId === "") {
+        alert("Please enter the Pharmacist ID.");
+    } else {
+        // Use the entered Pharmacist ID to send a request to remove the pharmacist
+        fetch(`http://localhost:4000/admin/pharmacist/${pharmacistId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Handle the response as needed
+                console.log(data);
+                alert("Pharmacist removed successfully.");
+            })
+            .catch((error) => console.error("Error removing pharmacist:", error));
+    }
+});
+const removePatientButton = document.getElementById("removePatientButton");
+const patientIdInput = document.getElementById("patientId");
+
+removePatientButton.addEventListener("click", function () {
+    const patientId = patientIdInput.value.trim();
+
+    if (patientId === "") {
+        alert("Please enter the Patient ID.");
+    } else {
+        // Use the entered Patient ID to send a request to remove the patient
+        fetch(`http://localhost:4000/admin/patient/${patientId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Handle the response as needed
+                console.log(data);
+                alert("Patient removed successfully.");
+            })
+            .catch((error) => console.error("Error removing patient:", error));
+    }
+});
+const viewPharmacistInfoButton = document.getElementById('viewPharmacistInfoButton');
+
+        viewPharmacistInfoButton.addEventListener('click', function() {
+            window.location.href = 'viewPharmacistInfo.html'; // Update with the correct URL
+        });
+
+
 				const SearchButton = document.getElementById('search');
 				  
 					SearchButton.addEventListener('click', async () => {
