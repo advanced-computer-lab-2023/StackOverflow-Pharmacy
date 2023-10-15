@@ -94,28 +94,28 @@ const acceptRequest = async (req, res) => {
 
   
 const getAvailableMedicines = async (req, res) => {
-    try {
-      const { name } = req.body; // Get the name from query parameters
-  
-      if (!name) {
-        return res.status(400).json({ message: 'Name parameter is required.' });
-      }
-  
-      const medicines = await Medicine.find(
-        { name: { $regex: new RegExp(name, 'i') }},
-        'image price description'
-      );
-  
-      if (medicines.length === 0) {
-        return res.status(404).json({ message: 'No matching medicines with stock available.' });
-      }
-  
-      res.status(200).json(medicines);
-    } catch (error) {
-      // Handle any errors that may occur during the database query
-      res.status(500).json({ error: 'Internal Server Error' });
+  try {
+    const { name } = req.body; // Get the name from query parameters
+
+    if (!name) {
+      return res.status(400).json({ message: 'Name parameter is required.' });
     }
+
+    const medicines = await Medicine.find(
+      { name: { $regex: new RegExp(name, 'i') }},
+      'image price description'
+    );
+
+    if (medicines.length === 0) {
+      return res.status(404).json({ message: 'No matching medicines with stock available.' });
+    }
+
+    res.status(200).json(medicines);
+  } catch (error) {
+    // Handle any errors that may occur during the database query
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+}
   const filterMedicineByMedicalUse = async (req, res) => {
     try {
       const { medicalUse } = req.body;
@@ -164,14 +164,15 @@ const getAvailableMedicines = async (req, res) => {
   
   const getPharmacistInfo = async (req, res) => {
     try {
+      
       const { id } = req.params; // Get the pharmacist's ID from the request parameters
-  
+     console.log(id)
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Invalid pharmacist ID' });
       }
-  
+   
       const pharmacist = await Pharmacist.findById(id);
-  
+      console.log(pharmacist)
       if (!pharmacist) {
         return res.status(404).json({ error: 'Pharmacist not found' });
       }
@@ -179,7 +180,9 @@ const getAvailableMedicines = async (req, res) => {
       res.status(200).json(pharmacist);
     } catch (error) {
       // Handle any errors that may occur during the database query
+      console.log(error.message)
       res.status(500).json({ error: error.message });
+      console.log(error.message)
     }
   }
   
@@ -223,6 +226,24 @@ const login = async (req, res) => {
     res.status(500).json({error: error.message})
   }
 }
+const getReuesst = async (req, res) => {
+  try {
+    
+  
+    const pharmacist = await Pharmacist.find({status: 'Pending'});
+    console.log(pharmacist)
+    if (!pharmacist) {
+      return res.status(404).json({ error: 'Pharmacist not found' });
+    }
+
+    res.status(200).json(pharmacist);
+  } catch (error) {
+    // Handle any errors that may occur during the database query
+    console.log(error.message)
+    res.status(500).json({ error: error.message });
+    console.log(error.message)
+  }
+}
 const getData = async (req, res) => {
   try {
     const user = req.user
@@ -260,5 +281,6 @@ searchMedicineByName,
 filterMedicineByMedicalUse,
 getAvailableMedicines,
 createWebToken,
-acceptRequest
+acceptRequest,
+getReuesst
 }

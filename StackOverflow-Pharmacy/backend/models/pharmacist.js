@@ -5,42 +5,48 @@ const { isEmail } = require('validator');
 const PharmacistSchema = new Schema({
     _id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref: 'User',
         required: true
-    }
-    ,name: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 3,
-      maxlength: 50,
     },
-      hourRate: {
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 50,
+    },
+    hourRate: {
         type: Number,
         required: true,
-      },
-      affiliation: {
+    },
+    affiliation: {
         type: String,
         required: true,
-      },
-      educationBackground: {
+    },
+    educationBackground: {
         type: String,
         required: true,
-      },
-       birthdate: {
+    },
+    birthdate: {
         type: Date,
-      },
-      email: {
+    },
+    email: {
         type: String,
         required: true,
-        unique: true, // Ensure unique email addresses for patients
+        unique: true, // Ensure unique email addresses for pharmacists
         trim: true,
         validate: {
-          validator: isEmail,
-          message: 'Invalid email address',
+            validator: isEmail,
+            message: 'Invalid email address',
         },
-      },
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'Approved', 'Rejected'],
+        default: 'Pending',
+    },
 }, { timestamps: true });
+
 
 const Pharmacist = mongoose.model('Pharmacist', PharmacistSchema);
 

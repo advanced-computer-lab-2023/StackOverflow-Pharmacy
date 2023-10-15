@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>request List</title>
+
+    <link rel="stylesheet" type="text/css" href="medicines.css">
+</head>
+<body>
+    <header>
+        <h1>Request List</h1>
+    </header>
+    <main>
+        <div class="request-list">
+            <!-- Medicine items will be dynamically added here -->
+        </div>
+    </main>
+    <script>
+        fetch('http://localhost:4000/admin/reuests')
+            .then(response => response.json())
+            .then(data => {
+                const requestList = document.querySelector('.request-list');
+                data.forEach(reuest => {
+                    const requestItem = document.createElement('div');
+                    requestItem.classList.add('request-item');
+                    requestItem.innerHTML = `
+                        
+                        <h3>${reuest.name}</h3>
+                        <p>hourRate: $${reuest.hourRate}</p>
+                        <p>affiliation: ${reuest.affiliation}</p>
+                        <p>educationBackground: $${reuest.educationBackground}</p>
+                        <p>Description: ${reuest.description}</p>
+                        <p>birthdate: $${reuest.birthdate}</p>
+                        <p>email: ${reuest.email}</p>
+                        <p>status: $${reuest.status}</p>
+                       
+                    `;
+                    requestList.appendChild(requestItem);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
+
+
+
+name
+  hourRate
+  affiliation
+  educationBackground
+   birthdate
+  email,
+    status

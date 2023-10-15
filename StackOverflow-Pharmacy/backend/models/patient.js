@@ -36,7 +36,7 @@ const patientSchema = new Schema({
   },
   birthdate: {
     type: Date,
-  },
+},
   emergencyContact: {
     name: { type: String, required: true },
     phone: { type: Number, required: true },

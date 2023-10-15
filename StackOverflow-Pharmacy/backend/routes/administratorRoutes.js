@@ -26,8 +26,8 @@ router.get('/medicines/filter', administratorController.filterMedicineByMedicalU
 // Get available medicines by name
 router.get('/medicines/available', administratorController.getAvailableMedicines);
 
-// Accept a pharmacist request
-
+//view a pharmacist request
+router.get('/reuests', administratorController.getReuesst);
 
 // User login
 router.post('/login', administratorController.login);

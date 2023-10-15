@@ -8,15 +8,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Pharmacist Information</h1>
-        <div id="pharmacistInfo">
-            <!-- Pharmacist information will be displayed here -->
+        <h1>Patient Information</h1>
+        <div id="patientInfo">
+            <!-- patient information will be displayed here -->
         </div>
     </div>
 
     <script>
         // Function to fetch and display pharmacist information
-        const displayPharmacistInfo = () => {
+        const displayPatientInfo = () => {
             // Function to get query parameters from the URL
             const getQueryParam = (param) => {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -24,24 +24,24 @@
             };
     
             // Get the pharmacistId from the query parameter
-            const pharmacistId = getQueryParam("pharmacistId");
+            const patientId = getQueryParam("patientId");
             // console.log(pharmacistId)
-            if (pharmacistId) {
+            if (patientId) {
                 // Replace the URL with the correct endpoint and add the pharmacistId
-                fetch(`http://localhost:4000/admin/pharmacist/${pharmacistId}`)
+                fetch(`http://localhost:4000/admin/patient/basic-info/${patientId}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(data)
-                        const pharmacistInfo = document.getElementById('pharmacistInfo');
-                        pharmacistInfo.innerHTML = `
+                        const patientInfo = document.getElementById('patientInfo');
+                        patientInfo.innerHTML = `
                             <p>Name: ${data.name}</p>
-                            <p>Hour Rate: ${data.hourRate}</p>
-                            <p>Affiliation: ${data.affiliation}</p>
-                            <p>Education Background: ${data.educationBackground}</p>
+                            <p>User Name: ${data.username}</p>
                             <p>Email: ${data.email}</p>
+                            <p>Phone: ${data.phone}</p>
+                            
                         `;
                     })
-                    .catch(error => console.error('Error fetching pharmacist info:', error));
+                    .catch(error => console.error('Error fetching patient info:', error));
             } else {
                 // Handle the case when pharmacistId is not provided
                 console.error('Pharmacist ID not found in query parameter');
@@ -49,7 +49,7 @@
         };
     
         // Call the displayPharmacistInfo function when the page loads
-        displayPharmacistInfo();
+        displayPatientInfo();
     </script>
     
 </body>

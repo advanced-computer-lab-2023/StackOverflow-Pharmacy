@@ -10,7 +10,7 @@
     <div class="formcontainer">
         <form class="login100-form validate-form">
             <span class="login100-form-title">
-                Patient Registration
+                <h1>Patient Registration</h1>
             </span>
 
             <div class="wrap-input100 validate-input" data-validate="Name is required">
@@ -31,7 +31,7 @@
 
             <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                 <input class="input100" id="email" type="text" name="email" placeholder="Email" required>
-                <span class="focus-input100"></span>
+                <span class "focus-input100"></span> <!-- Corrected the typo here -->
                 <span class="symbol-input100">
                     <i class="fa fa-envelope" aria-hidden="true"></i>
                 </span>
@@ -41,17 +41,18 @@
                 <input class="input100" id="password" type="password" name="password" placeholder="Password" required>
                 <span class="focus-input100"></span>
                 <span class="symbol-input100">
-                    <i class "fa fa-lock" aria-hidden="true"></i>
+                    <i class="fa fa-lock" aria-hidden="true"></i> <!-- Corrected the typo here -->
                 </span>
             </div>
 
             <div class="wrap-input100 validate-input" data-validate="Date of Birth is required">
-                <input class="input100" id="birth" type="text" name="birth" placeholder="Date of Birth" required>
-                <span class="focus-input100"></span>
-                <span class="symbol-input100">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                </span>
-            </div>
+				<div class="input-header">Birthday</div>
+				<input class="input100" id="birth" type="date" name="birth" placeholder="Date of Birth" required>
+				<span class="focus-input100"></span>
+				<span class="symbol-input100">
+					<i class="fa fa-calendar" aria-hidden="true"></i>
+				</span>
+			</div>
 
             <div class="wrap-input100 validate-input" data-validate="Gender is required">
                 <input class="input100" id="gender" type="text" name="gender" placeholder="Gender" required>
@@ -70,94 +71,98 @@
             </div>
 
             <div id="errorMessage" class="error-message" style="display: none;"></div>
-			<!-- Add "[]" to the name attribute to indicate it's an array of emergency contacts -->
-<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
-    <input class="input100" id="emergencyContact" type="text" name="emergencyContact[]" placeholder="Emergency Contact Name" required>
-    <!-- Other fields for emergency contact data -->
-</div>
-<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
-    <input class="input100" id="emergencyName" type="text" name="emergencyName[]" placeholder="Emergency Contact Number" required>
-    <!-- Other fields for emergency contact data -->
-</div>
-<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
-    <input class="input100" id="emergencyRelation" type="text" name="emergencyRelation[]" placeholder="Emergency Contact Relation" required>
-    <!-- Other fields for emergency contact data -->
-</div>
 
+			<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+				<input class="input100" id="emergencyContactName" type="text" name="emergencyContactName" placeholder="Emergency Contact Name" required>
+			</div>
+			<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+				<input class="input100" id="emergencyContactPhone" type="text" name="emergencyContactPhone" placeholder="Emergency Contact Number" required>
+			</div>
+			<div class="wrap-input100 validate-input" data-validate="Emergency contact is required">
+				<input class="input100" id="emergencyContactRelation" type="text" name="emergencyContactRelation" placeholder="Emergency Contact Relation" required>
+			</div>
+			
+			
 
             <div class="container-login100-form-btn">
                 <button class="login100-form-btn" id="registerButton">
                     Register
                 </button>
             </div>
-            
         </form>
     </div>
 
     <script>
-		// Add an event listener to the form submission
 		document.addEventListener('DOMContentLoaded', () => {
-			const registerButton = document.getElementById('registerButton');
-			const errorMessageElement = document.getElementById('errorMessage');
-	
-			registerButton.addEventListener('click', async (event) => {
-				event.preventDefault(); // Prevent the default form submission
-	
-				// Get values from the registration form
-				const name = document.getElementById('name').value;
-				const username = document.getElementById('username').value;
-				const email = document.getElementById('email').value;
-				const password = document.getElementById('password').value;
-				const birth = document.getElementById('birth').value;
-				const gender = document.getElementById('gender').value;
-				const phone = document.getElementById('phone').value;
-				const emergencyContact = document.getElementById('emergencyContact').value;
-				const emergencyName = document.getElementById('emergencyName').value;
-				const emergencyRelation = document.getElementById('emergencyRelation').value;
+       const registerButton = document.getElementById('registerButton');
+const errorMessageElement = document.getElementById('errorMessage');
 
-				const emer = {emergencyContact,emergencyName,emergencyRelation}
-	
-				// Create an object with the form data
-				const formData = {
-					name,
-					username,
-					email,
-					password,
-					birth,
-					gender,
-					phone,
-					emer,
-					role: 'Patient', // Assuming the role is 'Patient'
-				};
-	
-				// Send a POST request to your backend API
-				try {
-					const response = await fetch('http://localhost:4000/api/users/register', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(formData),
-					});
-	
-					if (response.status === 201) {
-						// Registration successful, you can redirect to another page or show a success message
-						alert('Patient registration successful! You can now log in.');
-						window.location.href = 'homepage.html'; // Redirect to your login page
-					} else {
-						// Registration failed, handle the error
-						const errorData = await response.json(); // Parse the error response
-						const errorMessage = errorData.message || 'An error occurred. Please try again later.';
-						errorMessageElement.textContent = errorMessage;
-						errorMessageElement.style.display = 'block';
-					}
-				} catch (error) {
-					console.error('Error:', error);
-					errorMessageElement.textContent = 'An error occurred. Please try again later.';
-					errorMessageElement.style.display = 'block';
-				}
-			});
-		});
-	</script>
+registerButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    // Get values from the registration form
+    const name = document.getElementById('name').value;
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const birthdate = document.getElementById('birth').value;
+    const gender = document.getElementById('gender').value;
+    const phone = document.getElementById('phone').value;
+
+    // Create an array for emergency contact
+    const emergencyContacts = [];
+
+	const emergencyContactName = document.getElementById('emergencyContactName').value;
+const emergencyContactPhone = document.getElementById('emergencyContactPhone').value;
+const emergencyContactRelation = document.getElementById('emergencyContactRelation').value;
+
+
+		emergencyContacts.push({
+            name: emergencyContactName,
+            phone: emergencyContactPhone,
+            relation: emergencyContactRelation,
+        });
+
+
+    // Create an object with the form data
+    const formData = {
+        name,
+        username,
+        email,
+        password,
+        birthdate,
+        gender,
+        phone,
+        emergencyContacts,
+        role: 'Patient',
+    };
+
+    // Send a POST request to your backend API
+    try {
+        const response = await fetch('http://localhost:4000/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.status === 201) {
+            alert('Patient registration successful! You can now log in.');
+            window.location.href = 'homepage.html';
+        } else {
+            const errorData = await response.json();
+            const errorMessage = errorData.message || 'An error occurred. Please try again later.';
+            errorMessageElement.textContent = errorMessage;
+            errorMessageElement.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorMessageElement.textContent = 'An error occurred. Please try again later.';
+        errorMessageElement.style.display = 'block';
+    }
+});
+});
+    </script>
 </body>
 </html>

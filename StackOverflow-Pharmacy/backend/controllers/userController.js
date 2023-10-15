@@ -1,8 +1,10 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const patientt = require('../models/patient');
-const pharmacist = require('../models/pharmacist');
+const Patient = require('../models/patient'); // Import the Patient model
+const Pharmacist = require('../models/pharmacist'); // Import the Pharmacist model
+
+
 
 // Function to generate a JWT token
 function generateToken(user) {
@@ -22,54 +24,68 @@ const registerPatient = async (req, res) => {
       name,
       email,
       password,
-      birthDate,
+      birthdate,
       role,
+      gender,
+      phone,
+      emergencyContacts,
     } = req.body;
-
-    // Check if the email is already registered
-  /*  const existingUser = await User.findOne({ email });
+    console.log(birthdate)
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
-    }*/
+    }
 
     // Hash the password before saving it
-   // const hashedPassword = bcrypt.hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user document
+    // Ensure that emergencyContacts is an array
+    if (!Array.isArray(emergencyContacts)) {
+      return res.status(400).json({ message: 'Invalid emergencyContacts data' });
+    }
+
+    // Create a new user document with basic properties
     const newUser = new User({
       username,
-      password,
-      role
+      password: hashedPassword,
+      role,
     });
 
-     // If the user is a patient, pharmacist, or administrator, add relevant properties
-     console.log(role)
-     if (role === 'Patient') {
-        const { gender,phone,emergencyContact} = req.body;
-        console.log(newUser)
-      const pat = {
-        _id:newUser._id,
-        name:name,
-        gender : gender,
-        email:email,
-        phone : phone,
-        birthdate:birthDate,
-        emergencyContact : emergencyContact
-  }
-        patientt.create(pat)
-      } else if (role === 'Administrator') {
-        // Add any specific properties for administrators here
-      }
-      
     await newUser.save();
+console.log(birthdate)
+    if (role === 'Patient') {
+      for (const contact of emergencyContacts) {
+        const patientData = {
+          _id: newUser._id, // Assign the user's _id to the patient
+          name,
+          gender,
+          email,
+          phone,
+          birthdate: birthdate,
+          emergencyContact: {
+            name: contact.name,
+            phone: contact.phone,
+            relation: contact.relation,
+          },
+        };
+
+        // Create a new patient instance and save it
+        const newPatient = new Patient(patientData);
+        await newPatient.save();
+      }
+    } else if (role === 'Administrator') {
+      // Handle Administrator-specific properties here if needed
+    }
 
     res.status(201).json({ user: newUser });
   } catch (error) {
     console.log('Error:', error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
-}
+};
+
+
 
 const createPendingPharmacist = async (req, res) => {
   try {
@@ -78,10 +94,13 @@ const createPendingPharmacist = async (req, res) => {
       name,
       email,
       password,
-      birthDate,
+      birthdate, // Update the variable name
       role,
+      hourRate,
+      affiliation,
+      educationBackground,
     } = req.body;
-
+   
     // Check if the email is already registered
     const existingUser = await User.findOne({ email });
 
@@ -96,37 +115,39 @@ const createPendingPharmacist = async (req, res) => {
     const newUser = new User({
       username,
       password: hashedPassword,
-      role
+      role,
     });
 
-     // If the user is a patient, pharmacist, or administrator, add relevant properties
-     console.log(role)
-     if (role === 'Pharmacist') {
-      const { hourRate, affiliation, educationBackground, email } = req.body;
-      console.log(newUser)
+    // If the user is a pharmacist, add relevant properties
+    if (role === 'Pharmacist') {
       const pharm = {
         _id: newUser._id,
-        hourRate: hourRate,
-        affiliation: affiliation,
-        educationBackground: educationBackground, // Fixed property name
-        name: name,
-        email: email,
-        birthdate: birthDate
-      }
-      pharmacist.create(pharm)
-      
-      } else if (role === 'Administrator') {
-        // Add any specific properties for administrators here
-      }
-      
+        hourRate,
+        affiliation,
+        educationBackground,
+        name,
+        email,
+        birthdate: birthdate, // Convert the birthdate string to a Date object
+      };
+
+      // Create a new pharmacist instance and save it
+      const newPharmacist = new Pharmacist(pharm);
+      await newPharmacist.save();
+    } else if (role === 'Administrator') {
+      // Add any specific properties for administrators here
+    }
+
     await newUser.save();
 
     res.status(201).json({ user: newUser });
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).json({ error: error });
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
   }
-}
+};
+
+
+
 
 /*const submitRequest = async (req, res) => {
   try {

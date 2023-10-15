@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title> Patient Registration</title>
-    <link rel="stylesheet" type="text/css" href="admin.css">
+    <link rel="stylesheet" type="text/css" href="homepage.css">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -41,7 +41,7 @@
 						</button>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" id="pharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" required>
+						<input class="input100" id="pharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-user" aria-hidden="true"></i>
@@ -54,7 +54,7 @@
 						</button>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" id="patientId" type="text" name="patientId" placeholder="Patient ID" required>
+						<input class="input100" id="patientId" type="text" name="patientId" placeholder="Patient ID" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-user" aria-hidden="true"></i>
@@ -63,7 +63,7 @@
 					
 
                     <div class="container-login100-form-btn">
-						<button class="login100-form-btn" id="login100-form-btn">
+						<button class="login100-form-btn" id="View-Pharmacists-Requests">
 							View  Pharmacists Requests
 						</button>
 					</div>
@@ -80,7 +80,7 @@
 						</button>
 					</div>
 					<div class="wrap-input100 validate-input" data-validate = "Search is required">
-						<input class="input100" id="searchText" type="text" name="search" placeholder="Search" required>
+						<input class="input100" id="searchText" type="text" name="search" placeholder="Search" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -93,7 +93,7 @@
 						</button>
 					</div>
 					<div class="wrap-input100 validate-input" data-validate = "filter is required">
-						<input class="input100" id="filterText" type="text" name="search" placeholder="filter" required>
+						<input class="input100" id="filterText" type="text" name="search" placeholder="filter" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -106,7 +106,7 @@
 						</button>
 					</div>
 					<div class="wrap-input100 validate-input">
-						<input class="input100" id="pharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" required>
+						<input class="input100" id="getpharmacistId" type="text" name="pharmacistId" placeholder="Pharmacist ID" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-user" aria-hidden="true"></i>
@@ -120,7 +120,7 @@
 					</div>
 
 					<div class="wrap-input100 validate-input">
-						<input class="input100" id="patientId" type="text" name="patientId" placeholder="Patient ID" required>
+						<input class="input100" id="getpatientId" type="text" name="patientId" placeholder="Patient ID" >
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-user" aria-hidden="true"></i>
@@ -237,9 +237,26 @@ removePatientButton.addEventListener("click", function () {
 const viewPharmacistInfoButton = document.getElementById('viewPharmacistInfoButton');
 
         viewPharmacistInfoButton.addEventListener('click', function() {
-            window.location.href = 'viewPharmacistInfo.html'; // Update with the correct URL
+			const pharmacistId = document.getElementById('getpharmacistId').value;
+			console.log("pharmacisadaefstId")
+			console.log(pharmacistId)
+			const url = `viewPharmacistInf	o.html?pharmacistId=${pharmacistId}`;
+            window.location.href = url; // Update with the correct URL
         });
 
+
+
+
+
+		const viewPatientInfoButton = document.getElementById('viewPatient');
+
+        viewPatientInfoButton.addEventListener('click', function() {
+			const patientId = document.getElementById('getpatientId').value;
+			// console.log("pharmacisadaefstId")
+			// console.log(pharmacistId)
+			const url = `patientInf	o.html?patientId=${patientId}`;
+            window.location.href = url; // Update with the correct URL
+        });
 
 				const SearchButton = document.getElementById('search');
 				  
