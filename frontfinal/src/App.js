@@ -1,42 +1,29 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes,Route } from 'react-router-dom';
-
-import './App.css'
+import './App.css';
 import Home from './home';
-import PatientPage from './patientpage';
+import PharmacistPage from './PharmacistPage';
 import LoginForm from './LoginForm';
 import ResetPassword from './resetpassword';
-import PharmacistRequestView from './adminpage';
-import ResetPasswordView from './resetOtp';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Updated import
+
 import Login from './login';
 import Logout from './logout';
-import Changep from './changep';
-import Viewdocapt from './viewdocapp';
-import Viewhealth from './viewhealth';
-import DocumentUpload from './uploadmedichistory';
-import Viewdocs from './viewrequestdoc';
+
 function App() {
   return (
     <Router>
-      <Routes>
-      <Route path='/' element={<Home></Home>}></Route>
-      <Route path='/patientpage' element={<PatientPage />}></Route>
-      <Route path='/resetOtp' element={<ResetPasswordView />}></Route>
-      <Route path='/resetpassword' element={<ResetPassword />}></Route>
-      <Route path='/' element={<LoginForm></LoginForm>}></Route>
-      <Route path='/adminpage' element={<PharmacistRequestView />}></Route>
+      <Routes> {/* Use Routes instead of Switch */}
+        <Route path='/' element={<Home></Home>}></Route>
+        <Route path='/PharmacistPage' element={<PharmacistPage />}></Route>
+        <Route path='/resetpassword' element={<ResetPassword />}></Route>
 
-     <Route path='/login' element={<Login></Login>}></Route>
-      <Route path='/logout' element={<Logout></Logout>}></Route>
-      <Route path='/changep' element={<Changep></Changep>}></Route>
-      <Route path='/viewdocapp' element={<Viewdocapt></Viewdocapt>}></Route>
-      <Route path='/viewhealth' element={<Viewhealth></Viewhealth>}></Route>
-<Route path='upload' element={<DocumentUpload></DocumentUpload>}></Route>
-<Route path='docs' element={<Viewdocs></Viewdocs>}></Route>
-</Routes>
+        <Route path='/login' element={<Login></Login>}></Route>
+        <Route path='/logout' element={<Logout></Logout>}></Route>
+        <Route path='/pharmacist' element={<PharmacistPage />}></Route> {/* Include PharmacistPage route here */}
+        <Route path='/*' element={<LoginForm></LoginForm>}></Route> {/* A catch-all route for LoginForm */}
+      </Routes>
     </Router>
   );
-  
 }
 
 export default App;

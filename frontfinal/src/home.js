@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
-import patientpage from './patientpage';
+import PharmacistPage from './PharmacistPage';
 export default function Home(){  
 
   
    return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <h1>Admin Login Form</h1>
+      <h1>Pharmacist Login Form</h1>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: '10px' }}>
           <label htmlFor="username">Username:</label>
@@ -18,7 +18,7 @@ export default function Home(){
         </div>
       </div>
       <div style={{ display: 'flex' }}>
-      <Link to="/adminpage">
+      <Link to="/PharmacistPage">
         <button style={{ backgroundColor: '#0074cc', color: '#fff', border: 'none', borderRadius: '5px', padding: '10px 20px', margin: '0 10px', cursor: 'pointer' }}>Login</button>
         </Link>
         <Link to="/resetpassword">
