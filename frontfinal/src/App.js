@@ -5,6 +5,7 @@ import './App.css'
 import Home from './home';
 import PatientPage from './patientpage';
 import LoginForm from './LoginForm';
+import CheckoutPage from './checkout';
 import ResetPassword from './resetpassword';
 import PharmacistRequestView from './adminpage';
 import ResetPasswordView from './resetOtp';
@@ -21,6 +22,7 @@ function App() {
       <Routes>
       <Route path='/' element={<Home></Home>}></Route>
       <Route path='/patientpage' element={<PatientPage />}></Route>
+      <Route path='/checkout' element={<CheckoutPage />}></Route>
       <Route path='/resetOtp' element={<ResetPasswordView />}></Route>
       <Route path='/resetpassword' element={<ResetPassword />}></Route>
       <Route path='/' element={<LoginForm></LoginForm>}></Route>

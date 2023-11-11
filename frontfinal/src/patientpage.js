@@ -55,6 +55,10 @@ const PatientPage = () => {
     // Implement your change password logic here
     console.log('Change Password clicked');
   };
+  const handleProceedToCheckout = () => {
+    alert('Proceeding to checkout!');
+    window.location.href = '/checkout';
+  };
 
   return (
     <div>
@@ -141,6 +145,11 @@ const PatientPage = () => {
       <br />
       <Link to="/">
         <button style={buttonStyle} onClick={handleLogout}>Logout</button>
+      </Link>
+      <Link to ="checkout">
+      <button style={buttonStyle} onClick={handleProceedToCheckout}>
+        Proceed to Checkout
+      </button>
       </Link>
     </div>
   );
