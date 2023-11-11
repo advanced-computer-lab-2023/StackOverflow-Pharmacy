@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './styles.css';
 
 const CheckoutPage = () => {
   const [addressList, setAddressList] = useState([
-    'New cairo fifth district',
-    'Nasr city 10th district',
-    'heliopolis EL Nozha ',
+    '123 First Street',
+    '456 Second Avenue',
+    '789 Third Avenue',
   ]);
   const [newAddress, setNewAddress] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
@@ -113,7 +114,9 @@ const CheckoutPage = () => {
           />
           <label htmlFor="cod-payment">Cash on Delivery</label>
         </div>
-        <button type="submit">Proceed to Pay</button>
+        <Link to="/viewOrderDetails">
+        <button>Proceed to Pay</button>
+      </Link>
       </form>
     </div>
   );
