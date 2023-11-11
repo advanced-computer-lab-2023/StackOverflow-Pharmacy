@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Home from './home';
+
 
 const PatientPage = () => {
   const [viewMedicine, setViewMedicine] = useState('');
@@ -8,7 +8,7 @@ const PatientPage = () => {
   const [filterMedicine, setFilterMedicine] = useState('');
   const [overTheCounter, setOverTheCounter] = useState('');
   const [viewCart, setViewCart] = useState([]);
-
+  const [counter, setCounter] = useState(1); // State to keep track of counters for each item in the cart
   // Dummy data for medicines
   const dummyMedicines = ['Medicine A', 'Medicine B', 'Medicine C', 'Medicine D'];
 
@@ -35,15 +35,40 @@ const PatientPage = () => {
     alignItems: 'center',
     marginTop: '10px',         // Add margin between the "View Cart" list and other elements
   };
+  
+  
 
-  const handleAddToCart = (item) => {
-    setViewCart([...viewCart, item]);
+  const handleAddToCart = (itemName) => {
+    const itemExists = viewCart.some((item) => item.name === itemName);
+
+    if (itemExists) {
+      const updatedCart = viewCart.map((item) =>
+        item.name === itemName ? { ...item, counter: item.counter + 1 } : item
+      );
+      setViewCart(updatedCart);
+    } else {
+      setViewCart([...viewCart, { name: itemName, counter: 1 }]);
+    }
   };
 
   const handleRemoveFromCart = (index) => {
     const updatedCart = [...viewCart];
     updatedCart.splice(index, 1);
     setViewCart(updatedCart);
+  };
+
+  const handleIncrementCounter = (index) => {
+    const updatedCart = [...viewCart];
+    updatedCart[index].counter += 1;
+    setViewCart(updatedCart);
+  };
+
+  const handleDecrementCounter = (index) => {
+    const updatedCart = [...viewCart];
+    if (updatedCart[index].counter > 1) {
+      updatedCart[index].counter -= 1;
+      setViewCart(updatedCart);
+    }
   };
 
   const handleLogout = () => {
@@ -125,8 +150,12 @@ const PatientPage = () => {
         <ul>
           {viewCart.map((item, index) => (
             <li key={index}>
-              {item}
+              {item.name} {/* Display the name of the item */}
               <button style={buttonStyle} onClick={() => handleRemoveFromCart(index)}>Remove</button>
+              {/* Display +, -, and counter buttons */}
+              <button style={buttonStyle} onClick={() => handleIncrementCounter(index)}>+</button>
+              <button style={buttonStyle} onClick={() => handleDecrementCounter(index)}>-</button>
+              <button style={buttonStyle}>{item.counter}</button>
             </li>
           ))}
         </ul>
