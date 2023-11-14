@@ -1,0 +1,27 @@
+@import './styles/WelcomePage.css';
+@import './styles/SignUpPatient.css';
+@import './styles/SignUpPharmacist.css';
+@import './styles/Login.css';
+@import './styles/Header.css';
+@import './styles/ChooseSignUpType.css';
+@import './styles/PatientHome.css';
+@import './styles/MedicineList.css';
+@import './styles/SearchResults.css';
+@import './styles/ViewCart.css';
+@import './styles/Checkout.css';
+@import './styles/OrderDetails.css';
+
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

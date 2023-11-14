@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="login.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="formcontainer">
+        <form class="login100-form validate-form login-form" id="loginForm">
+            <span class="login100-form-title">
+                Login to EL7A2NY Pharmacy
+            </span>
+
+            <div class="input-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn" onclick="login()">Log In</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:4000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });                console.log(JSON.stringify({ username, password }));
+
+                const data = await response.json();
+                console.log(data);
+                if (response.ok) {
+                    // Redirect the user based on their role
+                    if (data.role === 'Patient') {
+                        
+                        window.location.href = 'patient.html';
+                    } else if (data.role === 'Pharmacist') {
+                        if (data.status === 'Approved') {
+                            window.location.href = 'pharmacist.html';
+                        } else {
+                            window.location.href = 'preHomePage.html'; // Redirect to a pending page
+                        }
+                    } else if (data.role === 'Administrator') {
+                        window.location.href = '/admin/home';
+                    } 
+                } else {
+                    // Handle login errors
+                    console.error('Login failed:', data.error);
+                }
+            } catch (error) {
+                console.error('Error during login:', error.message);
+            }
+        }
+    </script>
+</body>
+</html>

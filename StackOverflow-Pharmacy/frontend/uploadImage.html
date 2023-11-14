@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Medicine Image</title>
+    <link rel="stylesheet" href="uploadImage.css">
+</head>
+<body>
+    <main>
+        <h1>Upload Medicine Image</h1>
+        <form id="uploadForm">
+            <label for="medicineName">Medicine Name:</label>
+            <input type="text" id="medicineName" name="medicineName" required>
+
+            <label for="imageUrl">Image URL:</label>
+            <input type="text" id="imageUrl" name="imageUrl" required>
+
+            <button type="submit">Upload</button>
+        </form>
+    </main>
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const medicineName = document.getElementById('medicineName').value;
+            const imageUrl = document.getElementById('imageUrl').value;
+
+            if (!medicineName || !imageUrl) {
+                alert('Please provide both the medicine name and an image URL.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:4000/api/pharmacists/medicines/upload-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: medicineName, image: imageUrl }),
+                });
+
+                if (response.ok) {
+                    alert('Image uploaded successfully.');
+                    window.location.href = 'pharmacist.html'; // Redirect to pharmacist dashboard or another page
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        });
+    </script>
+</body>
+</html>

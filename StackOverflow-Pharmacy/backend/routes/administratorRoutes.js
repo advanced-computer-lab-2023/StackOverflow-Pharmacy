@@ -29,6 +29,10 @@ router.get('/medicines/available', administratorController.getAvailableMedicines
 //view a pharmacist request
 router.get('/reuests', administratorController.getReuesst);
 
+router.post('/accept/:pharmacistId', administratorController.acceptPharmacistRequest);
+
+router.post('/reject/:pharmacistId', administratorController.rejectPharmacistRequest);
+
 // User login
 router.post('/login', administratorController.login);
 

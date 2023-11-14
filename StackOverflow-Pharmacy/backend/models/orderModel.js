@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema({
-  id: {
+  medicine: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Medicine', // Reference to the Medicine model
     required: true,
@@ -30,11 +30,13 @@ const orderSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
+    required: false
   },
   status: {
     type: String,
     enum: ['Not Processed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
-    required: true,
+    default: 'Not Processed',
+    required: false
   },
   deliveryPrice: {
     type: Number,

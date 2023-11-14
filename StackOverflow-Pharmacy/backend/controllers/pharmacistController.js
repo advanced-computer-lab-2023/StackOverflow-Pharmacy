@@ -210,6 +210,36 @@ const addQuantityToMedicine = async (req, res) => {
   }
 }
   
+const uploadMedicineImage = async (req, res) => {
+  try {
+    const { name, image } = req.body;
+
+    // Validate that the required fields are provided
+    if (!name || !image) {
+      return res.status(400).json({ error: "Please provide the medicine's name and the image URL for uploading." });
+    }
+
+    // Find the medicine by its name
+    const existingMedicine = await Medicine.findOne({ name });
+
+    if (!existingMedicine) {
+      return res.status(404).json({ message: "Medicine not found." });
+    }
+
+    // Update the medicine's image URL
+    existingMedicine.image = image;
+
+    // Save the updated medicine
+    const updatedMedicine = await existingMedicine.save();
+
+    res.status(200).json(updatedMedicine);
+  } catch (error) {
+    // Handle any errors that may occur during the update
+    res.status(500).json({ error: "Internal Server Error" });
+    console.error(error.message);
+  }
+};
+
 
 module.exports = {
 addmedicine,
@@ -219,4 +249,5 @@ searchMedicineByName,
 filterMedicineByMedicalUse,
 editMedicine,
 addQuantityToMedicine,
+uploadMedicineImage
 }

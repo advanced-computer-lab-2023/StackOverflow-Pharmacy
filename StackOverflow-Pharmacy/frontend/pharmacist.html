@@ -20,6 +20,7 @@
         <button class="dashboard-button" id="medicineQuantityListButton">View Medicine's Quantity & Sales</button>
         <button class="dashboard-button" id="addMedicineButton">Add Medicine</button>
         <button class="dashboard-button" id="editMedicineButton">Edit Medicine</button>
+        <button class="dashboard-button" id="uploadImageButton">Upload Medicine Image</button>
     </main>
     <script src="pharmacist.js"></script>
     <script>
@@ -93,6 +94,11 @@
             // Redirect to the Medicines List page
             console.log("aaffffff")
             window.location.href = 'addMedicine.html'; // Update with the correct URL
+        });
+        const uploadImageButton = document.getElementById('uploadImageButton');
+        uploadImageButton.addEventListener('click', function() {
+            // Redirect to the Upload Image page
+            window.location.href = 'uploadImage.html'; // Update with the correct URL
         });
     </script>
 </body>

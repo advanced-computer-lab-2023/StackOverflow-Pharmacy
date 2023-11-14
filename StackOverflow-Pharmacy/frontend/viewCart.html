@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Cart</title>
+    <link rel="stylesheet" type="text/css" href="viewCart.css" />
+  </head>
+  <body>
+    <header>
+      <h1>View Cart</h1>
+    </header>
+    <main>
+      <div class="medicine-list">
+        <!-- Cart items will be dynamically added here -->
+      </div>
+      <div id="checkout-container" style="display: none">
+        <button
+          id="checkout-button"
+          style="
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+          "
+        >
+          Checkout
+        </button>
+      </div>
+    </main>
+    <script>
+      // Use JavaScript to fetch and populate cart items
+      fetch("http://localhost:4000/api/patients/cart/${userId}", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then((data) => {
+          if (data.trim() === "") {
+            console.error("Response is empty.");
+            return;
+          }
+
+          try {
+            const jsonData = JSON.parse(data);
+            const medicineList = document.querySelector(".medicine-list");
+            if (jsonData.items) {
+              jsonData.items.forEach((cartItem) => {
+                const medicineItem = document.createElement("div");
+                medicineItem.classList.add("medicine-item");
+                medicineItem.innerHTML = `
+            <h3>Medicine Name: ${cartItem.id.name}</h3>
+            <p>Quantity: <input class="quantity-input" type="number" value="${cartItem.count}" readonly></p>
+            <p>Price: $${cartItem.id.price}</p>
+            <button class="remove-from-cart-button" data-medicine-id="${cartItem.id._id}">Remove from Cart</button>
+            <button class="plus-button" data-medicine-id="${cartItem.id._id}">+</button>
+            <button class="minus-button" data-medicine-id="${cartItem.id._id}">-</button>
+          `;
+                medicineList.appendChild(medicineItem);
+              });
+            }
+
+            // Check if the cart is not empty and display the Checkout button
+            if (jsonData.items && jsonData.items.length > 0) {
+              const checkoutContainer =
+                document.getElementById("checkout-container");
+              checkoutContainer.style.display = "block";
+            }
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
+          }
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+
+      // Add event listeners for remove-from-cart buttons
+      const removeFromCartButtons = document.querySelectorAll(
+        ".remove-from-cart-button"
+      );
+      removeFromCartButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const medicineId = event.target.getAttribute("data-medicine-id");
+
+          // Send a request to remove the medicine from the cart
+          fetch(
+            `http://localhost:4000/api/patients/medicines/cart/${medicineId}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              // Handle success (e.g., show a confirmation message)
+              console.log("Medicine removed from cart:", data);
+
+              // Remove the item from the page after successful removal
+              event.target.parentElement.remove();
+            })
+            .catch((error) =>
+              console.error("Error removing medicine from cart:", error)
+            );
+        });
+      });
+
+      // Add event listeners for plus and minus buttons to change item quantities
+      const plusButtons = document.querySelectorAll(".plus-button");
+      const minusButtons = document.querySelectorAll(".minus-button");
+      plusButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          adjustQuantity(button, 1);
+        });
+      });
+      minusButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          adjustQuantity(button, -1);
+        });
+      });
+
+      function adjustQuantity(button, change) {
+        const input = button.parentElement.querySelector(".quantity-input");
+        let quantity = parseInt(input.value);
+        quantity += change;
+        if (quantity < 1) {
+          return; // Do not allow decreasing quantity below 1
+        }
+        input.value = quantity;
+
+        const medicineId = button.getAttribute("data-medicine-id");
+
+        // Send a request to adjust the quantity of the medicine in the cart
+        fetch(
+          `http://localhost:4000/api/patients/medicines/cart/adjust/${medicineId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ quantity }),
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle success (e.g., show a confirmation message)
+            console.log("Medicine quantity adjusted:", data);
+          })
+          .catch((error) =>
+            console.error("Error adjusting medicine quantity:", error)
+          );
+      }
+
+      // Add an event listener to the Checkout button
+      const checkoutButton = document.getElementById("checkout-button");
+      checkoutButton.addEventListener("click", () => {
+        // Redirect to the checkout page
+        window.location.href = "checkout.html"; // Change the URL to your checkout page
+      });
+    </script>
+  </body>
+</html>

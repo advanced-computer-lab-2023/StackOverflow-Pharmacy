@@ -1,0 +1,80 @@
+.medicine-list-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .medicine-list-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .medicine-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* Center-align the medicine items */
+  }
+  
+  .medicine-item {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Set a fixed width for the medicine items */
+  }
+  
+  .medicine-image {
+    max-width: 100%;
+    max-height: 275px;
+    height: auto;
+  }
+  
+  .medicine-name {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .medicine-price {
+    font-weight: bold;
+  }
+  
+  .medicine-description {
+    margin: 10px 0;
+  }
+  
+  .add-to-cart-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .view-cart-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1;
+  }
+
+  .login-message{
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: fixed;
+  
+    justify-content: center;
+  }
+  

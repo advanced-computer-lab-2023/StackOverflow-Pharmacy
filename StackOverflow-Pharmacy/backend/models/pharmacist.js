@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const { isEmail } = require('validator');
 
 const PharmacistSchema = new Schema({
-    _id: {
+    _id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -45,6 +45,15 @@ const PharmacistSchema = new Schema({
         enum: ['Pending', 'Approved', 'Rejected'],
         default: 'Pending',
     },
+    pharmacyDegree: {
+        type: String,
+    },
+    workingLicense: {
+        type: String,
+    },
+    PharmacistId: {
+        type: String, 
+}
 }, { timestamps: true });
 
 

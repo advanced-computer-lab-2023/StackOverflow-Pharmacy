@@ -5,10 +5,16 @@ const app = express();
 const cors = require('cors');
 const path = require('path'); // Import the path module
 const port = process.env.PORT || 3000;
-
+const cookieParser = require('cookie-parser');
 // Middleware to parse JSON data
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+const corsOptions = {
+  origin: 'http://localhost:3000', // Replace with the actual origin of your React app
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI, {

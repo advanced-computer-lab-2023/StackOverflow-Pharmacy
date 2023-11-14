@@ -5,23 +5,23 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true, // Ensure unique usernames
+    unique: true,
     trim: true,
     minlength: 3,
     maxlength: 50,
   },
   password: {
-    type: String,
+    type: String, // Make sure the password field is defined
     required: true,
     trim: true,
     minlength: 8,
-    select: false,
   },
   role: {
     type: String,
-    enum: ['Pharmacist', 'Patient', 'Administrator'], // Fixed typo
+    enum: ['Pharmacist', 'Patient', 'Administrator'],
   },
 }, { timestamps: true });
+
 
 const User = mongoose.model('User', userSchema);
 
