@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; // Import the js-cookie library
+import Cookies from "js-cookie";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {  Modal } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 
 function MedicineList() {
   const [medicines, setMedicines] = useState([]);
   const [showLoginMessage, setShowLoginMessage] = useState(false);
-  const [userId, setUserId] = useState(""); // Use the useState hook to manage userId
+  const [userId, setUserId] = useState("");
+  const [alternativeTooltip, setAlternativeTooltip] = useState(null);
+  const [showAlternativesModal, setShowAlternativesModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,7 +27,8 @@ function MedicineList() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Medicines fetched:", data);
-        setMedicines(data);
+        const activeMedicines = data.filter((medicine) => !medicine.isArchived);
+        setMedicines(activeMedicines);
       })
       .catch((error) => console.error("Error fetching medicines:", error));
   }, []);
@@ -28,26 +42,25 @@ function MedicineList() {
 
   async function getUserId() {
     try {
-      // Make a request to the user profile endpoint to fetch the user's profile
       const response = await fetch("http://localhost:4000/api/users/profile", {
         method: "GET",
         credentials: "include",
         headers: {
-          Authorization: `Bearer ${authToken}`, // Include the user's JWT token
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
         },
       });
 
       if (response.status === 200) {
         const user = await response.json();
-        return user._id; // Assuming your user object has an "id" property
+        return user._id;
       } else {
         console.error("Error fetching user profile:", response.statusText);
-        return null; // Return null or handle the error as needed
+        return null;
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      return null; // Return null or handle the error as needed
+      return null;
     }
   }
 
@@ -56,15 +69,25 @@ function MedicineList() {
     console.log("fetchedUserId:", fetchedUserId);
 
     if (fetchedUserId) {
-      setUserId(fetchedUserId); // Update the userId state
+      setUserId(fetchedUserId);
       navigate(`/viewCart/${fetchedUserId}`);
     } else {
       // Handle the case where user ID could not be fetched
     }
   };
+  const handleViewPrescriptionMedicinesClick = async () => {
+    const fetchedUserId = await getUserId();
+    console.log("fetchedUserId:", fetchedUserId);
 
+    if (fetchedUserId) {
+      setUserId(fetchedUserId);
+      // Navigate to the new page with the user ID
+      navigate(`/prescriptionMedicines/${fetchedUserId}`);
+    } else {
+      // Handle the case where user ID could not be fetched
+    }
+  };
   const addToCart = async (medicineId) => {
-
     try {
       if (!authToken) {
         console.log("User is not authenticated. Showing login message.");
@@ -84,7 +107,7 @@ function MedicineList() {
       );
 
       if (response.status === 200) {
-        console.log("Medicine added to cart.");
+        toast.success("Medicine added to the cart!");
       } else {
         console.error(
           "Error adding medicine to cart. Status:",
@@ -100,44 +123,174 @@ function MedicineList() {
     navigate("/login");
   };
 
-  return (
-    <div>
-      <h1>Medicines List</h1>
-      <main>
-        {showLoginMessage && (
-          <div className="login-message">
-            Please log in to add items to the cart.{" "}
-            <button onClick={handleLoginClick}>Login</button>
+  const renderAlternativeTooltip = (alternatives) => {
+    if (!alternatives || alternatives.length === 0) {
+      return null;
+    }
+
+    return (
+      <div>
+        {alternatives.length === 0 ? (
+          <p>No alternatives available.</p>
+        ) : (
+          <div className="medicine-list">
+            {alternatives.map((alternative) => (
+              <div key={alternative._id} className="medicine-item">
+                <img
+                  className="medicine-image"
+                  src={alternative.image}
+                  alt={alternative.name}
+                />
+                <Typography variant="h5">{alternative.name}</Typography>
+                <Typography>Price: ${alternative.price}</Typography>
+                <Typography>Description: {alternative.description}</Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="add-to-cart-button"
+                  onClick={() => handleAlternativeClick(alternative)}
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            ))}
           </div>
         )}
-        <div className="medicine-list">
-          {medicines.map((medicine) => (
-            <div key={medicine._id} className="medicine-item">
-              <img
-                className="medicine-image"
-                src={medicine.image}
-                alt={medicine.name}
-              />
-              <h3>{medicine.name}</h3>
-              <p>Price: ${medicine.price}</p>
-              <p>Description: {medicine.description}</p>
-              <button
-                className="add-to-cart-button"
-                onClick={() => addToCart(medicine._id)}
-              >
-                Add to Cart
-              </button>
-            </div>
-          ))}
-        </div>
-      </main>
-      <button
-        className="view-cart-button"
-        onClick={handleViewCartClick}
-      >
-        View My Cart
-      </button>
+      </div>
+    );
+    
+  };
+  const handleAlternativeClick = (alternative) => {
+    // Add alternative to the cart or handle as needed
+    addToCart(alternative._id.toString());
+  };
+  const handleViewAlternativesClick = async (medicineId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/patients/alternativeMedicines/${medicineId}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const alternatives = await response.json();
+        if (alternatives.length === 0) {
+          // If no alternatives, show a message to the user
+          toast.info("No alternatives available for this medicine.");
+        } else {
+          setAlternativeTooltip(alternatives);
+          setShowAlternativesModal(true);
+        }
+      } else if (response.status === 404) {
+        // If alternatives not found, show a message to the user
+        toast.info("No alternatives found for this medicine.");
+      } else {
+        console.error("Error fetching alternatives. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching alternatives:", error);
+    }
+  };
+
+  const handleCloseAlternativesModal = () => {
+    setShowAlternativesModal(false);
+    setAlternativeTooltip(null);
+  };
+  return (
+    <Container>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontFamily: "cursive" }}>
+    Medicines List
+  </Typography>
+  <main>
+    {showLoginMessage && (
+      <div className="login-message">
+        Please log in to add items to the cart.{" "}
+        <Button color="primary" onClick={handleLoginClick}>
+          Login
+        </Button>
+      </div>
+    )}
+    <div className="medicine-list">
+      {medicines.map((medicine) => (
+        <Card key={medicine._id} className="medicine-item" sx={{ mb: 2 }}>
+          <img
+            className="medicine-image"
+            src={medicine.image}
+            alt={medicine.name}
+          />
+          <CardContent>
+            <Typography variant="h5">{medicine.name}</Typography>
+            <Typography>Price: ${medicine.price}</Typography>
+            <Typography>Description: {medicine.description}</Typography>
+            {medicine.numStock === 0 ? (
+              <div>
+                <Typography style={{ color: "red" }}>
+                  Out of stock
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleViewAlternativesClick(medicine._id)}
+                >
+                  View Alternatives
+                </Button>
+              </div>
+            ) : (
+              <CardActions>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="add-to-cart-button"
+                  onClick={() => addToCart(medicine._id)}
+                >
+                  Add to Cart
+                </Button>
+              </CardActions>
+            )}
+          </CardContent>
+        </Card>
+      ))}
     </div>
+    <div style={{ position: 'fixed', bottom: 0, left: '51.5%', transform: 'translateX(-50%)', marginBottom: '5px' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            className="view-cart-button"
+            onClick={handleViewCartClick}
+          >
+            View My Cart
+          </Button>
+        </div>
+  </main>
+
+  {/* Alternatives Modal */}
+  <Modal show={showAlternativesModal} onHide={handleCloseAlternativesModal}>
+    <Modal.Header closeButton>
+      <Modal.Title>Alternatives</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      {alternativeTooltip && renderAlternativeTooltip(alternativeTooltip)}
+    </Modal.Body>
+  </Modal>
+
+  <div style={{ position: 'fixed', top: '110px', right: '10px' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          className="view-prescription-medicines-button"
+          onClick={handleViewPrescriptionMedicinesClick}
+        >
+          View Prescription Medicines
+        </Button>
+      </div>
+  <ToastContainer />
+</Container>
   );
 }
 

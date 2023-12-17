@@ -1,39 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Typography, Grid, TextField, Container, Box } from '@mui/material';
+import Cookies from 'js-cookie';
 
 function PatientHome() {
   const [searchText, setSearchText] = useState('');
   const [filterText, setFilterText] = useState('');
   const [userData, setUserData] = useState({});
+  const [patientData, setPatientData] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          return;
-        }
+  const getAuthTokenFromCookie = () => {
+    const authToken = Cookies.get('jwt', { domain: 'localhost', path: '/' });
+    return authToken;
+  };
 
-        const response = await fetch('http://localhost:4000/api/users/profile', {
+  const authToken = getAuthTokenFromCookie();
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/users/profile", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 200) {
+        const user = await response.json();
+        console.log('User data:', user);
+  
+        setUserData(user);
+        setPatientData({ name: user.username });
+  
+        const userId = user._id;
+  
+        const patientResponse = await fetch(`http://localhost:4000/api/patients/basic-info/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
-
-        if (response.status === 200) {
-          const data = await response.json();
-          setUserData(data);
+  
+        if (patientResponse.status === 200) {
+          const patientData = await patientResponse.json();
+          console.log('Patient data:', patientData);
+          setPatientData(patientData);
         } else {
-          // Handle errors
+          console.error('Error fetching patient data:', patientResponse.statusText);
         }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      } else {
+        console.error('Error fetching user data:', response.statusText);
       }
-    };
+    } catch (error) {
+      console.error('Error in fetchUserData:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
   }, []);
 
@@ -82,51 +109,53 @@ function PatientHome() {
   };
 
   return (
-    <div>
-      <h1>Patient Home Page</h1>
-      <h1>Welcome, {userData.name || 'User'}!</h1>
-
-      <div className="container-login100-form-btn">
-        <Button onClick={() => handleButtonClick('viewMedicines')}>View Available Medicines</Button>
-        <Button onClick={() => handleButtonClick('search')}>Search for Medicine</Button>
-        <InputButton
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search"
-          action={() => handleButtonClick('search')}
-        />
-        <Button onClick={() => handleButtonClick('filter')}>Filter Medicine</Button>
-        <InputButton
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
-          placeholder="Filter"
-          action={() => handleButtonClick('filter')}
-        />
-        <Button onClick={() => handleButtonClick('viewOrders')}>View Orders</Button>
-      </div>
-    </div>
+    <Container>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontFamily: "cursive" }}>
+        Welcome {patientData.name} !
+      </Typography>
+  
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={6}>
+          <Container>
+            <TextField
+              fullWidth
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Search"
+            />
+          </Container>
+        </Grid>
+  
+        <Grid item xs={12} sm={6} md={6}>
+          <Container>
+            <Button variant="contained" color="primary" fullWidth onClick={() => handleButtonClick('search')}>
+              Search for Medicine
+            </Button>
+          </Container>
+        </Grid>
+  
+        <Grid item xs={12} sm={6} md={6}>
+          <Container>
+            <TextField
+              fullWidth
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              placeholder="Filter"
+            />
+          </Container>
+        </Grid>
+  
+        <Grid item xs={12} sm={6} md={6}>
+          <Container>
+            <Button variant="contained" color="primary" fullWidth onClick={() => handleButtonClick('filter')}>
+              Filter Medicine
+            </Button>
+          </Container>
+        </Grid>
+      </Grid>
+    </Container>
   );
+  
 }
-
-// Reusable Button component
-const Button = ({ onClick, children }) => (
-  <div className="container-login100-form-btn">
-    <button className="login100-form-btn" onClick={onClick}>
-      {children}
-    </button>
-  </div>
-);
-
-// Reusable Input with Button component
-const InputButton = ({ value, onChange, placeholder, action }) => (
-  <div className="wrap-input100 validate-input" data-validate={`${placeholder} is required`}>
-    <input className="input100" type="text" value={value} onChange={onChange} placeholder={placeholder} required />
-    <span className="focus-input100"></span>
-    <span className="symbol-input100">
-      <i className="fa fa-lock" aria-hidden="true"></i>
-    </span>
-    <Button onClick={action}>Submit</Button>
-  </div>
-);
 
 export default PatientHome;

@@ -1,19 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 
 function ChooseSignUpType() {
   return (
-    <div className="choose-signup-container"> {/* Apply the styles */}
-      <h1>Choose Your Signup Type</h1>
-      <div className="signup-options">
+    <Container
+      className="choose-signup-container"
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontFamily: "cursive" }}>
+        Choose Your role
+      </Typography>
+      <div className="signup-options" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         <Link to="/signup/patient">
-          <button className="patient-signup-button">Sign Up as a Patient</button>
+          <Button variant="contained" color="primary" fullWidth>
+            Sign Up as a Patient
+          </Button>
         </Link>
         <Link to="/signup/pharmacist">
-          <button className="pharmacist-signup-button">Sign Up as a Pharmacist</button>
+          <Button variant="contained" color="primary" fullWidth>
+            Sign Up as a Pharmacist
+          </Button>
         </Link>
       </div>
-    </div>
+    </Container>
   );
 }
 

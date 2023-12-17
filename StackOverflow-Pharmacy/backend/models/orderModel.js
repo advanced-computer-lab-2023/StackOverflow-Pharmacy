@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const orderItemSchema = new mongoose.Schema({
   medicine: {
@@ -25,7 +26,10 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   items: [orderItemSchema],
-  address: String,
+  address: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address', // Reference to the Address model
+  },
   phone: String,
   date: {
     type: Date,

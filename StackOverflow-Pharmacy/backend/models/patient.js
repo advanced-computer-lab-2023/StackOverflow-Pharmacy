@@ -2,12 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { isEmail } = require('validator');
 
-const addressSchema = new Schema({
-  addressLine: { type: String, required: true },
-  city: { type: String, required: true },
-  country: { type: String, required: true },
-});
-
 const patientSchema = new Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -48,7 +42,10 @@ const patientSchema = new Schema({
     phone: { type: Number, required: true },
     relation: { type: String, required: true },
   },
-  addresses: [addressSchema],
+  addresses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address', // Reference to the Address model
+  }],
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);

@@ -11,7 +11,7 @@ const userSchema = new Schema({
     maxlength: 50,
   },
   password: {
-    type: String, // Make sure the password field is defined
+    type: String,
     required: true,
     trim: true,
     minlength: 8,
@@ -20,8 +20,17 @@ const userSchema = new Schema({
     type: String,
     enum: ['Pharmacist', 'Patient', 'Administrator'],
   },
+  passwordResetOtp: {
+    type: Number, 
+  },
+  passwordResetOtpExpiry: {
+    type: Date,
+  },
+  wallet:{
+    type:Number,
+    default:0
+  }
 }, { timestamps: true });
-
 
 const User = mongoose.model('User', userSchema);
 

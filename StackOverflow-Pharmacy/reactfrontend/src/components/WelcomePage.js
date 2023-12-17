@@ -1,19 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 function WelcomePage() {
   return (
-    <div className="welcome-container">
-      <h1>Welcome to Our Pharmacy</h1>
+    <Container className="welcome-container" maxWidth="sm">
+      <Typography variant="h1" gutterBottom>
+        Welcome to Our Pharmacy
+      </Typography>
       <div className="buttons">
-        <Link to="/choose-signup-type">
-          <button className="signup-button">Sign Up</button>
+        <Link to="/choose-signup-type" style={{ textDecoration: 'none' }}>
+          <Button variant="contained" color="primary" size="large" style={{ marginRight: '16px' }}>
+            Sign Up
+          </Button>
         </Link>
-        <Link to="/login">
-          <button className="login-button">Log In</button>
+        <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Button variant="outlined" color="primary" size="large">
+            Log In
+          </Button>
         </Link>
       </div>
-    </div>
+    </Container>
   );
 }
 

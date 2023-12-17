@@ -40,35 +40,61 @@ const addadmin = async (req, res) => {
 
 
 const removePharmacist = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({error: 'No such patient'})
+    return res.status(400).json({ error: 'Invalid ID' });
   }
 
-  const pharmacist = await Pharmacist.findOneAndDelete({_id: id})
+  try {
+    const pharmacist = await Pharmacist.findByIdAndDelete(id);
 
-  if(!pharmacist) {
-    return res.status(400).json({error: 'No such patient'})
+    if (!pharmacist) {
+      return res.status(404).json({ error: 'Pharmacist not found' });
+    }
+
+    // Now, delete the associated user
+    const user = await User.findByIdAndDelete(pharmacist._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ pharmacist, user });
+  } catch (error) {
+    console.error('Error removing pharmacist:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+};
 
-  res.status(200).json(pharmacist)
-}
 const removePatient = async (req, res) => {
-    const { id } = req.params
-  
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({error: 'No such patient'})
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid ID' });
+  }
+
+  try {
+    const patient = await Patient.findByIdAndDelete(id);
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
     }
-  
-    const patient = await Patient.findOneAndDelete({_id: id})
-  
-    if(!patient) {
-      return res.status(400).json({error: 'No such patient'})
+
+    // Now, delete the associated user
+    const user = await User.findByIdAndDelete(patient._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  
-    res.status(200).json(patient)
-}
+
+    res.status(200).json({ patient, user });
+  } catch (error) {
+    console.error('Error removing patient:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 const acceptRequest = async (req, res) => {
   try {
       // Retrieve the request ID that needs to be accepted
@@ -308,7 +334,6 @@ const rejectPharmacistRequest = async (req, res) => {
 const viewPharmacist = async (req, res) => {
   try {
      // Use _id to match the schema
-     console.log("jbwdbxhdbzssssssssssssssssssssssssssssssssssssssssssss")
     // Find the pharmacist by _id and update their status to 'Rejected'
     const pharmacists =await Pharmacist.find({status:"Pending"});
 
