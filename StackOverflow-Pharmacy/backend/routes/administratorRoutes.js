@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const administratorController = require('../controllers/administratorController');
 
 // Create a new administrator
@@ -29,6 +30,10 @@ router.get('/medicines/available', administratorController.getAvailableMedicines
 //view a pharmacist request
 router.get('/reuests', administratorController.getReuesst);
 
+router.post('/accept/', administratorController.acceptPharmacistRequest);
+
+router.post('/reject/', administratorController.rejectPharmacistRequest);
+router.get('/viewPharmacist', administratorController.viewPharmacist);
 // User login
 router.post('/login', administratorController.login);
 

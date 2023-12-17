@@ -1,0 +1,85 @@
+/* SignUpPatient.module.css */
+
+.signup-patient-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .signup-patient-container h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .signup-patient-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signup-patient-form label {
+    margin: 10px 0;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .signup-patient-form input,
+  .signup-patient-form select {
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .signup-patient-form select {
+    width: 100%;
+  }
+  
+  .emergency-contact-list {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  
+  .emergency-contact-item {
+    background-color: #f9f9f9;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+  }
+  
+  .emergency-contact-form {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+  }
+  
+  .emergency-contact-form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .signup-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .signup-button:hover {
+    background-color: #0056b3;
+  }
+  

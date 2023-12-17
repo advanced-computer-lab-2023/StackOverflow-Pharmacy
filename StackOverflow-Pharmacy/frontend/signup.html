@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pre-Signup</title>
+  <link rel="stylesheet" type="text/css" href="signup.css">
+</head>
+<h2>Select Your Role</h2>
+<form id="pre-signup-form">
+  <label for="role">Choose your role:</label>
+  <select name="role" id="role">
+    <option value="Pharmacist">Pharmacist</option>
+    <option value="Patient">Patient</option>
+  </select>
+  <input type="button" value="Next" id="next-button">
+</form>
+
+<script>
+  document.getElementById('next-button').addEventListener('click', function() {
+    var selectedRole = document.getElementById('role').value;
+    if (selectedRole === 'Pharmacist') {
+      window.location.href = 'submitPharmacist.html';
+    } else if (selectedRole === 'Patient') {
+      window.location.href = 'registerPatient.html';
+    }
+  });
+</script>
+</body>
+</html>

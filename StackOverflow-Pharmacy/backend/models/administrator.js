@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const adminSchema = new Schema({
-  // Exclude _id field here
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
   userName: {
     type: String,
     required: true,

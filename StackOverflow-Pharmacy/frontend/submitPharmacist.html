@@ -127,7 +127,7 @@
 	
 					if (response.status === 201) {
 						alert('Pharmacist registration request successful! Pending for approval.');
-						window.location.href = 'homepage.html';
+						window.location.href = 'preHomePage.html';
 					} else {
 						const errorData = await response.json();
 						const errorMessage = errorData.message || 'An error occurred. Please try again later.';

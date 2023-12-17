@@ -5,7 +5,7 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true, // Ensure unique usernames
+    unique: true,
     trim: true,
     minlength: 3,
     maxlength: 50,
@@ -15,12 +15,21 @@ const userSchema = new Schema({
     required: true,
     trim: true,
     minlength: 8,
-    select: false,
   },
   role: {
     type: String,
-    enum: ['Pharmacist', 'Patient', 'Administrator'], // Fixed typo
+    enum: ['Pharmacist', 'Patient', 'Administrator'],
   },
+  passwordResetOtp: {
+    type: Number, 
+  },
+  passwordResetOtpExpiry: {
+    type: Date,
+  },
+  wallet:{
+    type:Number,
+    default:0
+  }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

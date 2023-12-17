@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" type="text/css" href="checkout.css">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+    </header>
+    <main>
+        <div id="order-items">
+            <!-- Order items will be dynamically added here -->
+        </div>
+        <p>Total Cost: $<span id="total-cost">0</span></p>
+        <div id="address-container">
+            <!-- Delivery addresses will be displayed here -->
+        </div>
+        <div id="payment-method-container">
+            <h2>Payment Method</h2>
+            <input type="radio" name="paymentMethod" id="wallet" value="wallet">
+            <label for="wallet">Wallet</label>
+            <br>
+            <input type="radio" name="paymentMethod" id="creditCard" value="creditCard">
+            <label for="creditCard">Credit Card </label>
+            <br>
+            <input type="radio" name="paymentMethod" id="cashOnDelivery" value="cashOnDelivery">
+            <label for="cashOnDelivery">Cash on Delivery</label>
+        </div>
+        <p id="no-items-message" style="display: none;">No items in the cart.</p>
+        <select id="address-select" style="display: none;"></select>
+        <button id="checkoutButton">Checkout</button>
+    </main>
+    <script>
+        // Fetch the cart items and addresses from the server
+        Promise.all([
+            fetch("http://localhost:4000/api/patients/cart", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+            fetch("http://localhost:4000/api/patients/delivery-addresses", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        ])
+        .then((responses) => {
+            return Promise.all(responses.map((response) => response.json()));
+        })
+        .then(([cartData, addressData]) => {
+            const orderItems = document.getElementById("order-items");
+            const totalCostElement = document.getElementById("total-cost");
+            const addressContainer = document.getElementById("address-container");
+            const noItemsMessage = document.getElementById("no-items-message");
+            const addressSelect = document.getElementById("address-select");
+
+            let totalCost = 0;
+
+            cartData.items.forEach((cartItem) => {
+                const orderItem = document.createElement("p");
+                orderItem.textContent = `${cartItem.id.name} - $${cartItem.id.price} (Quantity: ${cartItem.count})`;
+                orderItems.appendChild(orderItem);
+
+                // Calculate the total cost
+                totalCost += cartItem.id.price * cartItem.count;
+            });
+
+            // Display the total cost
+            totalCostElement.textContent = totalCost;
+
+            // Check if there are no items in the cart and display the message
+            if (cartData.items.length === 0) {
+                noItemsMessage.style.display = "block";
+            }
+
+            // Display the saved address attributes if available
+            if (addressData) {
+                if (addressData.length === 0) {
+                    // If no addresses are available, show the address form
+                    addressContainer.innerHTML = `<p>No addresses available.</p>`;
+                } else {
+                    // Create a select element to choose from multiple addresses
+                    addressSelect.style.display = "block";
+                    addressSelect.innerHTML = "<option value=''>Choose an address:</option>";
+                    addressData.forEach((address, index) => {
+                        const { addressLine, city, country } = address;
+                        const option = document.createElement("option");
+                        option.value = index;
+                        option.textContent = `${addressLine}, ${city}, ${country}`;
+                        addressSelect.appendChild(option);
+                    });
+
+                    // Add an event listener to the select element to handle address selection
+                    addressSelect.addEventListener("change", (event) => {
+                        const selectedAddressIndex = event.target.value;
+                        if (selectedAddressIndex !== '') {
+                            // Send the selected address data to the server for storage
+                            const selectedAddress = addressData[selectedAddressIndex];
+                            fetch("http://localhost:4000/api/patients/save-selected-address", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(selectedAddress),
+                            })
+                            .then((response) => response.json())
+                            .then((data) => {
+                                console.log("Address saved successfully:", data);
+                            })
+                            .catch((error) => console.error("Error saving address:", error));
+                        }
+                    });
+                }
+            }
+        });
+
+        // Add an event listener for the checkout button
+        const checkoutButton = document.getElementById("checkoutButton");
+        checkoutButton.addEventListener("click", () => {
+            // Get the selected payment method
+            const paymentMethodElements = document.getElementsByName("paymentMethod");
+            let selectedPaymentMethod = null;
+            for (const element of paymentMethodElements) {
+                if (element.checked) {
+                    selectedPaymentMethod = element.value;
+                    break;
+                }
+            }
+
+            if (!selectedPaymentMethod) {
+                alert("Please select a payment method.");
+                return;
+            }
+
+            // Send the selected payment method to the server for processing
+            fetch("http://localhost:4000/api/patients/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ paymentMethod: selectedPaymentMethod }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Payment processed successfully:", data);
+                // Redirect or display a confirmation message, depending on the response
+            })
+            .catch((error) => console.error("Error processing payment:", error));
+        });
+    </script>
+</body>
+</html>

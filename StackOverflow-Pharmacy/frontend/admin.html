@@ -209,6 +209,7 @@ removePharmacistButton.addEventListener("click", function () {
             .catch((error) => console.error("Error removing pharmacist:", error));
     }
 });
+
 const removePatientButton = document.getElementById("removePatientButton");
 const patientIdInput = document.getElementById("patientId");
 
@@ -240,10 +241,10 @@ const viewPharmacistInfoButton = document.getElementById('viewPharmacistInfoButt
 			const pharmacistId = document.getElementById('getpharmacistId').value;
 			console.log("pharmacisadaefstId")
 			console.log(pharmacistId)
-			const url = `viewPharmacistInf	o.html?pharmacistId=${pharmacistId}`;
+			const url = `viewPharmacistInfo.html?pharmacistId=${pharmacistId}`;
             window.location.href = url; // Update with the correct URL
         });
-
+//C:\Users\Abdullah Ibrahim\Desktop\New folder (5)\StackOverflow-Pharmacy\StackOverflow-Pharmacy\frontend\viewPharmacistInfo.html
 
 
 
@@ -279,5 +280,10 @@ body})
     // Redirect to the "Add Admin" page
     window.location.href = addAdminPageURL;
   });
+  const ViewPharmacistsRequests = document.getElementById('View-Pharmacists-Requests');
+
+        ViewPharmacistsRequests.addEventListener('click', function() {
+            window.location.href = 'request.html'; // Update with the correct URL
+        });
 				</script>
 				

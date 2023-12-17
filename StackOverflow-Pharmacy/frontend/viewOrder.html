@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Orders</title>
+    <link rel="stylesheet" type="text/css" href="viewOrder.css"> <!-- Include your CSS file for styling -->
+</head>
+<body>
+    <header>
+        <h1>My Orders</h1>
+    </header>
+    <main>
+        <div id="order-list">
+            <!-- Order list will be dynamically added here -->
+        </div>
+    </main>
+    
+    <!-- Modal for Order Details -->
+    <div id="order-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <!-- Order details will be dynamically added here -->
+        </div>
+    </div>
+    
+    <script>
+        // Function to cancel an order
+        const cancelOrder = (orderId) => {
+            fetch(`/api/patients/orders/${orderId}/cancel`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => response.json())
+            .then((updatedOrder) => {
+                // Handle the updated order, e.g., update the UI to reflect the new status
+                console.log(`Order ${updatedOrder._id} has been cancelled.`);
+            })
+            .catch((error) => console.error("Error cancelling order:", error));
+        };
+
+        // Fetch the patient's order data from the server
+        fetch("/api/patients/orders", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((orders) => {
+            const orderList = document.getElementById("order-list");
+
+            orders.forEach((order) => {
+                const orderItem = document.createElement("div");
+                orderItem.classList.add("order-item");
+
+                const orderId = document.createElement("h2");
+                orderId.textContent = `Order ID: ${order._id}`;
+
+                const orderDetails = document.createElement("div");
+                orderDetails.classList.add("order-details");
+
+                const orderStatus = document.createElement("p");
+                orderStatus.textContent = `Status: ${order.status}`;
+
+                const orderDate = document.createElement("p");
+                orderDate.textContent = `Order Date: ${new Date(order.date).toDateString()}`;
+
+                const orderAddress = document.createElement("p");
+                orderAddress.textContent = `Delivery Address: ${order.address}`;
+
+                const orderPhone = document.createElement("p");
+                orderPhone.textContent = `Contact Phone: ${order.phone}`;
+
+                const orderPayment = document.createElement("p");
+                orderPayment.textContent = `Payment Type: ${order.paymentType}`;
+
+                const orderDeliveryPrice = document.createElement("p");
+                orderDeliveryPrice.textContent = `Delivery Price: $${order.deliveryPrice}`;
+
+                const viewButton = document.createElement("button");
+                viewButton.textContent = "View Details";
+                viewButton.addEventListener("click", () => {
+                    // Handle displaying the modal and fetching detailed order information
+                    const orderId = order._id;
+
+                    // Fetch order details based on the orderId
+                    fetch(`/api/patients/orders/${orderId}`)
+                        .then((response) => response.json())
+                        .then((orderDetails) => {
+                            const modal = document.getElementById("order-details-modal");
+                            const modalContent = modal.querySelector(".modal-content");
+
+                            // Clear previous content and populate modalContent with orderDetails data
+                            modalContent.innerHTML = '';
+
+                            // Add order details to the modal
+                            for (const key in orderDetails) {
+                                if (Object.hasOwnProperty.call(orderDetails, key)) {
+                                    const p = document.createElement("p");
+                                    p.textContent = `${key}: ${orderDetails[key]}`;
+                                    modalContent.appendChild(p);
+                                }
+                            }
+
+                            modal.classList.add("active");
+                        })
+                        .catch((error) => console.error("Error fetching order details:", error));
+                });
+
+                const cancelOrderButton = document.createElement("button");
+                cancelOrderButton.textContent = "Cancel Order";
+                cancelOrderButton.addEventListener("click", () => {
+                    // Call the cancelOrder function and pass the orderId
+                    cancelOrder(order._id);
+                });
+
+                orderDetails.appendChild(orderStatus);
+                orderDetails.appendChild(orderDate);
+                orderDetails.appendChild(orderAddress);
+                orderDetails.appendChild(orderPhone);
+                orderDetails.appendChild(orderPayment);
+                orderDetails.appendChild(orderDeliveryPrice);
+                orderDetails.appendChild(viewButton);
+                orderDetails.appendChild(cancelOrderButton);
+
+                orderItem.appendChild(orderId);
+                orderItem.appendChild(orderDetails);
+
+                orderList.appendChild(orderItem);
+            });
+        })
+        .catch((error) => console.error("Error fetching order data:", error));
+        
+        // Close the modal when clicking the close button (X)
+        const modal = document.getElementById("order-details-modal");
+        const closeButton = modal.querySelector(".close");
+        closeButton.addEventListener("click", () => {
+            modal.classList.remove("active");
+        });
+    </script>
+</body>
+</html>

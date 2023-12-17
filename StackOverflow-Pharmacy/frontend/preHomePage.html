@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Home Page</title>
+    <link rel="stylesheet" type="text/css" href="pre.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Add any additional CSS or meta tags you need here -->
+</head>
+<body>
+    <div class="formcontainer">
+        <form class="login100-form validate-form" onsubmit="return false;">
+            <span class="login100-form-title">
+                Welcome to EL7A2NY Pharmacy
+            </span>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn" onclick="redirectToAuthPage('login')">
+                    Log In
+                </button>
+            </div>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn" onclick="redirectToAuthPage('signup')">
+                    Sign Up
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function redirectToAuthPage(authType) {
+            // Redirect to the corresponding authentication page based on the button clicked
+            if (authType === 'login') {
+                window.location.href = 'login.html'; // Replace with the actual login page
+            } else if (authType === 'signup') {
+                window.location.href = 'signup.html'; // Replace with the actual signup page
+            }
+        }
+    </script>
+</body>
+</html>

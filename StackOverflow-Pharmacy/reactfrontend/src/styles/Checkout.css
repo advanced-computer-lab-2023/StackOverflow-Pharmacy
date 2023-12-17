@@ -1,0 +1,45 @@
+/* Checkout.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px; /* Added padding for a consistent look with the content */
+  }
+  
+  section {
+    margin-bottom: 20px;
+  }
+  
+  select {
+    width: 100%;
+    padding: 12px; /* Increased padding for better visibility and touch-friendly */
+    margin-top: 8px;
+    box-sizing: border-box; /* Ensures the padding is included in the total width */
+  }
+  
+  .address {
+    margin-top: 16px;
+  }
+  
+  .order-summary {
+    margin-top: 16px;
+  }
+  
+  .payment-method {
+    margin-top: 16px;
+  }
+  
+  /* Improved button styles */
+  button {
+    padding: 12px;
+    background-color: #4c59af;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  }
+  
+  button:hover {
+    background-color: #364190; /* Darker shade on hover for a subtle effect */
+  }
+  
