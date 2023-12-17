@@ -2,14 +2,15 @@
 @import './styles/SignUpPatient.css';
 @import './styles/SignUpPharmacist.css';
 @import './styles/Login.css';
-@import './styles/Header.css';
 @import './styles/ChooseSignUpType.css';
 @import './styles/PatientHome.css';
+@import './styles/PharmacistHome.css';
 @import './styles/MedicineList.css';
 @import './styles/SearchResults.css';
 @import './styles/ViewCart.css';
-@import './styles/Checkout.css';
-@import './styles/OrderDetails.css';
+@import './styles/total-sales-report.css';
+@import './styles/WelcomePage.css';
+
 
 
 body {

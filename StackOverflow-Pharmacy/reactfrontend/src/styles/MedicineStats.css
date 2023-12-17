@@ -1,0 +1,46 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .medicine-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 1rem;
+  }
+  
+  .medicine-stat-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    padding: 1rem;
+    width: 300px;
+  }
+  
+  .medicine-stat-item h3 {
+    color: #333;
+  }
+  
+  .medicine-stat-item p {
+    color: #666;
+    margin: 0.5rem 0;
+  }
+  
+  @media (max-width: 768px) {
+    .medicine-stat-item {
+      width: 100%;
+    }
+  }
+  

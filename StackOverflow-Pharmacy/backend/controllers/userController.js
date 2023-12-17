@@ -1,9 +1,16 @@
+const mongoose = require('mongoose');
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Admin = require("../models/administrator");
 const Patient = require("../models/patient"); // Import the Patient model
 const Pharmacist = require("../models/pharmacist"); // Import the Pharmacist model
+const Chat = require("../models/chatRoomModel");
+// const Message = require("../models/chatRoomModel");
+
 require("dotenv").config();
+const nodemailer = require("nodemailer");
+const ChatRoom = require('../models/chatRoomModel');
 
 // Register a new user (patient or pharmacist)
 const registerPatient = async (req, res) => {
@@ -139,16 +146,16 @@ const createPendingPharmacist = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     // Get the user ID from the token
-    const userId = req.user.id;
 
+    const userId = req.user.id;
     // Fetch the user profile from the database
     const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.status(200).json(user);
+    
   } catch (error) {
     res.status(500).json({ error: "Could not fetch user profile" });
   }
@@ -164,6 +171,7 @@ const createToken = (name) => {
 // Register a new user (patient or pharmacist)
 const maxAge = 24 * 60 * 60;
 const patientSignup = async (req, res) => {
+  console.log("Request body:", req.body);
   try {
     const {
       username,
@@ -194,14 +202,17 @@ const patientSignup = async (req, res) => {
     });
 
     await newUser.save();
-
+    console.log("User saved:", newUser);
     if (!Array.isArray(emergencyContacts)) {
+      console.log("wwwwwwwwwwwwww");
       return res
         .status(400)
         .json({ message: "Invalid emergencyContacts data" });
     }
 
     for (const contact of emergencyContacts) {
+      console.log("looping");
+
       const patientData = {
         _id: newUser._id,
         name,
@@ -215,9 +226,21 @@ const patientSignup = async (req, res) => {
           relation: contact.relation,
         },
       };
-
+      console.log("patient data : ", patientData);
       const newPatient = new Patient(patientData);
-      await newPatient.save();
+      try {
+        console.log("Before saving newPatient");
+        await newPatient.save();
+        console.log("After saving newPatient");
+      } catch (error) {
+        console.error("Error saving newPatient:", error);
+      }
+      console.log("Patient saved:", newPatient);
+
+      // Update the User document with the _id of the corresponding Patient document
+      newUser.patientId = newPatient._id;
+      await newUser.save();
+      console.log("User updated with patientId:", newUser);
     }
 
     // Generate a JWT token for the newly registered user
@@ -297,7 +320,6 @@ const login = async (req, res) => {
     const user = await User.findOne({
       username: { $regex: new RegExp(username, "i") },
     });
-    console.log("role :" ,user.role);
     if (!user) {
       console.log(`User not found for username: ${username}`);
       res.status(404).json({ error: "User not found" });
@@ -316,22 +338,16 @@ const login = async (req, res) => {
           if (pharmacist) {
             if (pharmacist.status === "Approved") {
               // Generate a JWT token for the authenticated pharmacist
-              const token = createToken(user._id);
-
-              // Set the JWT token as an HTTP-only cookie with a 24-hour expiration (86400 seconds)
+              const token = createToken(user.username);
               res.cookie("jwt", token, {
                 httpOnly: true,
                 maxAge: maxAge * 1000,
               });
-              console.log("JWT token set as a cookie");
-
-              res
-                .status(200)
-                .json({
-                  username: user.username,
-                  email: user.email,
-                  role: user.role,
-                });
+              res.status(200).json({
+                username: user.username,
+                email: user.email,
+                role: user.role,
+              });
             } else {
               res
                 .status(403)
@@ -348,26 +364,22 @@ const login = async (req, res) => {
             httpOnly: true,
             maxAge: maxAge * 1000,
           });
-          res
-            .status(200)
-            .json({
-              username: user.username,
-              email: user.email,
-              role: user.role,
-            });
+          res.status(200).json({
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          });
         } else if (user.role === "Administrator") {
           const token = createToken(user.username);
           res.cookie("jwt", token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
           });
-          res
-            .status(200)
-            .json({
-              username: user.username,
-              email: user.email,
-              role: user.role,
-            });
+          res.status(200).json({
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          });
         } else {
           res
             .status(403)
@@ -403,8 +415,8 @@ const getData = async (req, res) => {
 const logout = async (req, res) => {
   try {
     // Set the cookie to expire in the past, effectively deleting it
-    console.log("bdbhbvvvvvvvvvhb")
-    res.cookie('jwt', '',{
+    console.log("bdbhbvvvvvvvvvhb");
+    res.cookie("jwt", "", {
       httpOnly: true,
       maxAge: maxAge * 1000,
     });
@@ -415,107 +427,354 @@ const logout = async (req, res) => {
   }
 };
 const changePassword = async (req, res) => {
-  
   try {
-    // Find the user by ID
     const { oldPassword, newPassword } = req.body;
-    const _id=req.params;
-    const user = await User.findOne({_id}); // Assuming you have the user ID in the request
-  // Validate the old password
-  const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-  if (!isPasswordValid) {
-    throw new Error('Invalid old password');
-  }
-  const user1 = await User.findOneAndUpdate({_id},{password:newPassword},{ new: true });
-    res.status(200).json(user1);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-const forgetPassword = async (req, res) => {
-  const { email } = req.body;
+    const { userId } = req.params;
+    console.log("Received data:", req.params);
+   
+    const user = await User.findById(userId);
+console.log("User found:", user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log("Before findByIdAndUpdate");
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
-  try {
-    // Step 2: Generate and send OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-    sendOtpByEmail(email, otp);
-
-    // Step 3: Store OTP and Expiry Time in the database
-    const otpExpiry = new Date();
-    otpExpiry.setMinutes(otpExpiry.getMinutes() + 15); // OTP valid for 15 minutes
-
-    await User.findOneAndUpdate(
-      { email },
-      { $set: { passwordResetOtp: otp, passwordResetOtpExpiry: otpExpiry } }
-    );
-
-    res.status(200).json({ message: 'OTP sent successfully' });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
-const checkOTP = async (req, res) => {
-  const { email, otp } = req.body;
-
-  try {
-    // Step 6: Verify OTP
-    const user = await User.findOne({ email });
-
-    if (!user || user.passwordResetOtp !== otp || new Date() > user.passwordResetOtpExpiry) {
-      return res.status(400).json({ error: 'Invalid or expired OTP' });
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid old password" });
     }
 
-    res.status(200).json({ message: 'OTP verified successfully' });
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log("Hashed password:", hashedPassword);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+    console.log("Updated user:", updatedUser);
+    res.status(200).json(updatedUser);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error during password change:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
-const updatePassword = async (req, res) => {
-  const { email, newPassword } = req.body;
+};
+
+const forgotPassword = async (req, res) => {
+  console.log("Forgot password method called");
+  const { email, username } = req.body;
 
   try {
-    // Step 7: Update Password
-    const hashedPassword = // Hash the new password (use bcrypt or your preferred method)
-    await User.findOneAndUpdate(
-      { email },
-      { $set: { password: hashedPassword, passwordResetOtp: null, passwordResetOtpExpiry: null } }
+    console.log(
+      "Received forgot password request for email:",
+      email,
+      "and username:",
+      username
     );
 
-    res.status(200).json({ message: 'Password reset successfully' });
+    // Find the user based on the username or email
+    let user = await User.findOne({ $or: [{ username }, { email }] });
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check the role of the user
+    if (user.role === "Patient") {
+      console.log("User found as Patient:", user);
+      // Handle Patient-specific logic
+    } else if (user.role === "Pharmacist") {
+      console.log("User found as Pharmacist:", user);
+      // Handle Pharmacist-specific logic
+    } else if (user.role === "Administrator") {
+      console.log("User found as Admin:", user);
+      // Handle Admin-specific logic
+    }
+
+    const otp = generateOTP();
+    console.log("Generated OTP:", otp);
+
+    sendOtpByEmail(email, otp);
+
+    const otpExpiry = new Date();
+    otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
+
+    console.log("Before updating user:");
+    console.log("User found before update:", user || "User not found");
+
+    // Set the passwordResetOtp and passwordResetOtpExpiry for the user
+    await User.findByIdAndUpdate(user._id, {
+      $set: { passwordResetOtp: otp, passwordResetOtpExpiry: otpExpiry },
+    });
+
+    console.log("After updating user:");
+
+    // Fetch the updated user
+    const userAfterUpdate = await User.findOne({
+      $or: [{ username }, { email }],
+    });
+    console.log(
+      "User found after update:",
+      userAfterUpdate || "User not found"
+    );
+
+    console.log("OTP sent successfully");
+    res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error during password reset:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
+};
+
+const checkOTP = async (req, res) => {
+  const { username, otp } = req.body;
+
+  try {
+    console.log("Received OTP verification request for email:", username);
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log("User not found for username:", username);
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    console.log("User found in the database:", user);
+    console.log("User entered OTP:", otp);
+    console.log("Stored OTP:", user.passwordResetOtp);
+    console.log("Current time:", new Date());
+    console.log("Expiry time:", user.passwordResetOtpExpiry);
+
+    if (
+      
+      user &&
+      parseInt(user.passwordResetOtp) === parseInt(otp) &&
+      new Date() <= user.passwordResetOtpExpiry
+    ) {
+      console.log("OTP verified successfully");
+      res.status(200).json({ message: "OTP verified successfully" });
+    } else {
+      console.log("Invalid OTP or OTP expired");
+      res.status(400).json({ error: "Invalid OTP or OTP expired" });
+    }
+  } catch (error) {
+    console.error("Error during OTP verification:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+const updatePassword = async (req, res) => {
+  const { username, newPassword } = req.body;
+  console.log('Received update password request for username:', username);
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log('Hashed password:', hashedPassword);
+    await User.findOneAndUpdate(
+      { username },
+      {
+        $set: {
+          password: hashedPassword,
+          passwordResetOtp: null,
+          passwordResetOtpExpiry: null,
+        },
+      }
+    );
+    console.log('Password updated successfully');
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error during password update:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
-function sendOtpByEmail(email, otp) {
-  // Use Nodemailer or your email service of choice to send the OTP
-  // Here's a basic example using Nodemailer (make sure to set up your email transport options)
+
+const sendOtpByEmail = (email, otp) => {
+  // Create a nodemailer transporter
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-email-password',
+      user: "boodee19730000@gmail.com",
+      pass: "elxi ncik jjpj iwxc",
     },
   });
 
+  // Email options
   const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: email,
-    subject: 'Password Reset OTP',
+    from: "boodee19730000@gmail.com",
+    to: email, // Make sure 'email' is not empty or undefined
+    subject: "Password Reset OTP",
     text: `Your OTP for password reset is: ${otp}`,
   };
 
+  // Send email
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      console.error("Error sending email:", error);
+      // Handle the error, maybe return a response to the client indicating the issue.
     } else {
-      console.log('Email sent:', info.response);
+      console.log("Email sent:", info.response);
     }
   });
-}
+};
+const getChats = async (req, res) => {
+  try {
+    const patientId = req.query.firstID
+    const pharmacistRole = 'Pharmacist'
+    const user=await User.findOne({ _id: patientId })
+    console.log(user.role)
+    if(user.role==='Patient'){
+      const pharmacists = await User.find({ role: pharmacistRole });
 
+      const patientChats = await Chat.find({ $or: [{ firstID: user.username }, { secondID: user.username }] });
+
+      // Identify pharmacists with whom the patient doesn't have a chat
+      console.log("ndfffffffffffffffffffffffffffffffffff")
+      console.log(patientChats)
+      const newChats = pharmacists.filter(pharmacist =>
+        !patientChats.some(chat =>
+          chat.firstID===user.username && chat.secondID===pharmacist.username
+        )
+      );
+  
+      // Create new chats for pharmacists not found in existing chats
+      for (const pharmacist of newChats) {
+        await Chat.create({
+          firstID: user.username,
+          secondID: pharmacist.username,
+          messages: [],
+        });
+      }
+    }
+    if(user.role==='Pharmacist'){
+      const patients = await User.find({ role: "Patient" });
+      const pharmacistChats = await Chat.find({ $or: [{ firstID: user.username }, { secondID: user.username }] });
+
+      // Identify pharmacists with whom the patient doesn't have a chat
+      console.log("ndfffffffffffffffffffffffffffffffffff")
+      console.log(pharmacistChats)
+      const newChats = patients.filter(patient =>
+        !pharmacistChats.some(chat =>
+          chat.firstID===patient.username && chat.secondID===user.username
+        )
+      );
+  
+      // Create new chats for pharmacists not found in existing chats
+      for (const patient of newChats) {
+        await Chat.create({
+          firstID: patient.username,
+          secondID: user.username,
+          messages: [],
+        });
+      }
+    }
+    if (patientId) {
+      
+      const chats = await Chat.find({ $or: [{ firstID: user.username }, { secondID: user.username }] });
+    //  const names = await getNamesFromChats(chats);
+      res.status(200).json({ chats });
+    } else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const sendMessage = async (req, res) => {
+  let newChat
+  try {
+    const chat = req.body.chat;
+    const text = req.body.text;
+    const sender=req.body.sender // Fix the typo here
+
+    if (chat) {
+      // const message = await Message.create({ sender: chat.firstID, text: text });
+      const message = { sender, text: text }
+
+      newChat = await ChatRoom.findOne(
+        { _id: chat._id }
+      );
+      if (!newChat)
+        console.error("None")
+
+      newChat.messages.push(message);
+      await newChat.save()
+      
+      res.status(200).json({ newChat });
+    } else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: error.message }); // Fix the typo here
+  }
+};
+
+const createchat = async (req, res) => {
+  try {
+    const firstID = req.body.firstID;
+    const secondID = req.body.secondID;
+    if (firstID) {
+      const chat = await Chat.create({ firstID,secondID});
+      res.status(200).json({chat});
+    }  else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const searchToChat = async (req, res) => {
+  try {
+    const username = req.query.username
+    if (username) {
+      const  user = await User.findOne({ username}).select('_id');
+      res.status(200).json({user});
+    }  else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const getUserName = async (req, res) => {
+  try {
+    const _id = req.query.ID
+    if (_id) {
+      const  user = await User.findOne({ _id});
+      const username=user.username
+      res.status(200).json({username});
+    }  else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const getWallet = async (req, res) => {
+  try {
+    const _id = req.query.firstID
+    if (_id) {
+      const  user = await User.findOne({ _id});
+      const wallet=user.wallet
+      res.status(200).json({wallet});
+    }  else {
+      res.status(500).json({ error: "Failed to get user ID" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
   registerPatient,
   createPendingPharmacist,
@@ -527,7 +786,14 @@ module.exports = {
   getData,
   createToken,
   changePassword,
-  forgetPassword,
+  forgotPassword,
   checkOTP,
   updatePassword,
+  getChats,
+  sendMessage,
+  createchat,
+  searchToChat,
+  getUserName,
+  getWallet
 };
+

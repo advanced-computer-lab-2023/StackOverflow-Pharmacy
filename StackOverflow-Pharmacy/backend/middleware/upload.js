@@ -18,17 +18,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-// Handle file upload
-// app.post('/upload', upload.single('file'), (req, res) => {
-//     // Access the uploaded file using req.file
-//     const file = req.file;
-    
 
-//     // Process the file as needed (save to disk, database, etc.)
-//     // In this example, we are logging the file details
-//     console.log('File received:', file);
-
-//     res.json({ message: 'File uploaded successfully' });
-// });
 
 module.exports = {upload}
