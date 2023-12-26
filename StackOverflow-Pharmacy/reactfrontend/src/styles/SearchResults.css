@@ -1,0 +1,22 @@
+/* SearchResults.css */
+.container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+  
+  .result-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .result-item {
+    font-size: 18px;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+  }
+  

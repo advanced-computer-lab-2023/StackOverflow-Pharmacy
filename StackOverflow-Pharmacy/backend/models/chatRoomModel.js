@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-  sender: String, // Assuming 'sender' can be either 'firstID' or 'secondID' from the chat room
+  sender: {
+    type: String,
+    required: true,
+  },
   text: String,
   date: {
     type: Date,
@@ -11,18 +14,16 @@ const messageSchema = new mongoose.Schema({
 
 const chatRoomSchema = new mongoose.Schema({
   firstID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model for the first user
+    type: String,
     required: true,
   },
   secondID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model for the second user
+    type: String,
     required: true,
   },
-  messages: [messageSchema],
+  messages: {type: [messageSchema]},
 });
 
 const ChatRoom = mongoose.model('ChatRoom', chatRoomSchema);
-
-module.exports = ChatRoom;
+// const Message = mongoose.model('Message', messageSchema); // Add this line
+module.exports = ChatRoom; // Update this line

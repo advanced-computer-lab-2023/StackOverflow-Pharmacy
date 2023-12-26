@@ -18,12 +18,12 @@ const patientSchema = new Schema({
   gender: {
     type: String,
     required: true,
-    enum: ['male', 'female', 'other'], // Define the allowed gender values
+    enum: ['male', 'female', 'other'],
   },
   email: {
     type: String,
     required: true,
-    unique: true, // Ensure unique email addresses for pharmacists
+    unique: true,
     trim: true,
     validate: {
       validator: isEmail,
@@ -32,19 +32,20 @@ const patientSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true, // If you require a phone for patients
+    required: true,
   },
   birthdate: {
     type: Date,
-},
+  },
   emergencyContact: {
     name: { type: String, required: true },
     phone: { type: Number, required: true },
     relation: { type: String, required: true },
   },
-  
-  
-  
+  addresses: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Address', // Reference to the Address model
+  }],
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);

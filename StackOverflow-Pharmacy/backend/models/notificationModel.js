@@ -1,25 +1,27 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
-const notificationSchema = new mongoose.Schema({
-  userID: {
+const NotificationSchema = new Schema({
+  pharmacistId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'Pharmacist',
     required: true,
   },
-  title: String,
-  content: String,
-  type: {
+  message: {
     type: String,
-    enum: ['Message', 'Rescheduled', 'Canceled', 'Update'],
     required: true,
   },
-  date: {
+  timestamp: {
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ['Unread', 'Read'],
+    default: 'Unread',
+  },
 });
 
-const Notification = mongoose.model('Notification', notificationSchema);
+const Notification = mongoose.model('Notification', NotificationSchema);
 
 module.exports = Notification;

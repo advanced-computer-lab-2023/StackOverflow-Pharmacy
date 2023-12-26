@@ -1,0 +1,89 @@
+/* SignUpPharmacist.module.css */
+
+.signup-pharmacist-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.signup-pharmacist-container h1 {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.signup-pharmacist-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-pharmacist-form label {
+  margin: 10px 0;
+  font-weight: 500;
+  color: #555;
+}
+
+.signup-pharmacist-form input,
+.signup-pharmacist-form select {
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.signup-pharmacist-form select {
+  width: 100%;
+}
+
+.emergency-contact-list {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.emergency-contact-item {
+  background-color: #f9f9f9;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.emergency-contact-form {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+}
+
+.emergency-contact-form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.signup-pharmacist-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.signup-pharmacist-button:hover {
+  background-color: #0056b3;
+}
+
+.back-to-welcome a {
+  text-decoration: none;
+  color: #007BFF;
+}

@@ -1,0 +1,47 @@
+/* ChatWindow.css */
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  width: 80%; /* Set the width to 80% of the viewport */
+  max-width: 800px; /* Set a maximum width if needed */
+  margin: 0 auto; /* Center the chat window horizontally */
+  height: 100vh;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 10px;
+  max-width: 70%; /* Adjust the maximum width of the message bubble */
+}
+
+.sender-message {
+  align-self: flex-end;
+  background-color: #070b07; /* Custom color for sender messages, aligning with the theme */
+  color: white; /* Text color for sender messages */
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.receiver-message {
+  align-self: flex-start;
+  background-color: #757575; /* Gray color for receiver messages, aligning with the theme */
+  color: white; /* Text color for receiver messages */
+  border-radius: 10px;
+  padding: 10px;
+}
+
+
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}

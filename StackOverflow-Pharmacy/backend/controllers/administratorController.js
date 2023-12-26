@@ -4,6 +4,7 @@ const Pharmacist = require('../models/pharmacist')
 const Patient = require('../models/patient')
 const Medicine = require('../models/medicineModel')
 const User = require('../models/userModel')
+const bcrypt = require("bcrypt");
 //const Package= require('../models/package')
 const jwt = require('jsonwebtoken')
 
@@ -17,45 +18,83 @@ const addadmin = async (req, res) => {
     if (!userName || !password) {
       throw new Error('Username and password are required');
     }
-    const admin = await Admin.create({ userName, password });
-    res.status(200).json(admin);
+
+    // Create an "admin" document
     
+
+    // Create a "user admin" with the role "Administrator"
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username: userName,
+      password: hashedPassword, // Use the provided password
+      role: 'Administrator', // Make sure to use 'Administrator' here
+    });
+    await newUser.save(); // Save the user document
+    const admin = await Admin.create({_id: newUser._id, userName, password:hashedPassword });
+    res.status(200).json(admin);
+
   } catch (error) {
-    res.status(500).json({ error: error.message }); 
+    res.status(500).json({ error: error.message });
   }
 };
 
 
 const removePharmacist = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({error: 'No such patient'})
+    return res.status(400).json({ error: 'Invalid ID' });
   }
 
-  const pharmacist = await Pharmacist.findOneAndDelete({_id: id})
+  try {
+    const pharmacist = await Pharmacist.findByIdAndDelete(id);
 
-  if(!pharmacist) {
-    return res.status(400).json({error: 'No such patient'})
+    if (!pharmacist) {
+      return res.status(404).json({ error: 'Pharmacist not found' });
+    }
+
+    // Now, delete the associated user
+    const user = await User.findByIdAndDelete(pharmacist._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ pharmacist, user });
+  } catch (error) {
+    console.error('Error removing pharmacist:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+};
 
-  res.status(200).json(pharmacist)
-}
 const removePatient = async (req, res) => {
-    const { id } = req.params
-  
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({error: 'No such patient'})
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid ID' });
+  }
+
+  try {
+    const patient = await Patient.findByIdAndDelete(id);
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
     }
-  
-    const patient = await Patient.findOneAndDelete({_id: id})
-  
-    if(!patient) {
-      return res.status(400).json({error: 'No such patient'})
+
+    // Now, delete the associated user
+    const user = await User.findByIdAndDelete(patient._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  
-    res.status(200).json(patient)
-}
+
+    res.status(200).json({ patient, user });
+  } catch (error) {
+    console.error('Error removing patient:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 const acceptRequest = async (req, res) => {
   try {
       // Retrieve the request ID that needs to be accepted
@@ -194,8 +233,8 @@ const getPatientBasicInfo = async (req, res) => {
       return res.status(400).json({ error: 'Invalid patient ID' });
     }
 
-    const user = await User.findById(id).select("name username email phone");
-
+    const user = await Patient.findById(id).select("name username email phone");
+console.log(user)
 
     res.status(200).json(user);
   } catch (error) {
@@ -266,6 +305,44 @@ const logout = async (req, res) => {
   }
 }
 
+const acceptPharmacistRequest = async (req, res) => {
+  try {
+    const {pharmacistId} = req.body; // Use _id to match the schema
+
+    // Find the pharmacist by _id and update their status to 'Approved'
+    const pharmacist=await Pharmacist.findByIdAndUpdate(pharmacistId, { status: 'Approved' });
+
+    return res.status(200).json({pharmacist});
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'An error occurred while accepting the pharmacist request' });
+  }
+}
+const rejectPharmacistRequest = async (req, res) => {
+  try {
+    const {pharmacistId} = req.body // Use _id to match the schema
+    console.log("jknvxhbh")
+    // Find the pharmacist by _id and update their status to 'Rejected'
+    const pharmacist=await Pharmacist.findByIdAndUpdate(pharmacistId, { status: 'Rejected' });
+
+    return res.status(200).json({pharmacist});
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'An error occurred while rejecting the pharmacist request' });
+  }
+}
+const viewPharmacist = async (req, res) => {
+  try {
+     // Use _id to match the schema
+    // Find the pharmacist by _id and update their status to 'Rejected'
+    const pharmacists =await Pharmacist.find({status:"Pending"});
+
+    return res.status(200).json(pharmacists);
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'An error occurred while rejecting the pharmacist request' });
+  }
+}
 
 
 module.exports = {
@@ -282,5 +359,8 @@ filterMedicineByMedicalUse,
 getAvailableMedicines,
 createWebToken,
 acceptRequest,
-getReuesst
+getReuesst,
+acceptPharmacistRequest,
+rejectPharmacistRequest,
+viewPharmacist
 }
